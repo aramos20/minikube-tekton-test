@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-docker-image
+spec:
+  params:
+    - name: imageName
+      type: string
+      description: name of the image to build
+  steps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:v1.9.0
+      command:
+        - /kaniko/executor
+      args:
+        - --context=dir://$(workspaces.source.path)
+        - --dockerfile=$(workspaces.source.path)/Dockerfile"
+        - --destination=$(params.imageName)
+        - --oci-layout-path=/kaniko/oci-layout
+        - --insecure
+        - --skip-tls-verify
+  workspaces:
+    - name: source
+      description: code to build

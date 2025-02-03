@@ -1,14 +1,16 @@
 import os
 import psycopg2
+from flask_cors import CORS
 from flask import Flask, jsonify
 
 app = Flask(__name__)
+CORS(app)
 
 # Configuración de la base de datos
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_NAME = os.getenv('DB_NAME', 'database')
 DB_USER = os.getenv('DB_USER', 'user')
-DB_PASSWORD = os.getenv('DB_PASSWORD', 'password')
+DB_PASS = os.getenv('DB_PASS', 'password')
 
 # Conexión a la DB
 def get_db_conn():
@@ -16,7 +18,7 @@ def get_db_conn():
         host=DB_HOST,
         database=DB_NAME,
         user=DB_USER,
-        password=DB_PASSWORD
+        password=DB_PASS
     )
     return conn
 
@@ -26,7 +28,7 @@ def init_db():
         conn = get_db_conn()
         cursor = conn.cursor()
 
-        # Verificación de la tabla visits
+        # Tabla para contar visitas
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS visits (
                 id SERIAL PRIMARY KEY,
@@ -34,7 +36,7 @@ def init_db():
             )
         ''')
 
-        # Verificación de la tabla config
+        # Tabla para indicar el modo (develop o release)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS config (
                 id SERIAL PRIMARY KEY,
@@ -59,7 +61,7 @@ def init_db():
         conn.close()
 
     except Exception as e:
-        print(f"Error a la hora de crear la tabla: {e}")
+        print(f"Error al inicializar la db: {e}")
 
 init_db()
 

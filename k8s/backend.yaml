@@ -1,11 +1,4 @@
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: backend-config
-data:
-  ENVIRONMENT: develop
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,32 +15,31 @@ spec:
     spec:
       containers:
         - name: backend
-          image: testapi:latest
+          image: myapi:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 5000
           env:
             - name: DB_HOST
-              value: postgres-service
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: username
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: password
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: database
-            - name: ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: backend-config
-                  key: ENVIRONMENT
+                  name: db-config
+                  key: DB_HOST
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: DB_PASS
 ---
 apiVersion: v1
 kind: Service
@@ -61,4 +53,5 @@ spec:
       port: 5000
       targetPort: 5000
       name: backend
+      nodePort: 30007
   type: NodePort

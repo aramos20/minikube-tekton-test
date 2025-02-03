@@ -1,0 +1,18 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: deploy-to-k8s
+spec:
+  steps:
+    - name: deploy
+      image: lachlanevenson/k8s-kubectl:latest
+      command:
+        - kubectl
+      args:
+        - apply
+        - -f
+        - k8s/backend.yaml
+        - -f
+        - k8s/frontend.yaml
+        - -f
+        - k8s/postgres.yaml

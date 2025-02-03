@@ -11,12 +11,14 @@ data:
       </head>
       <body>
         <h1>Welcome to my frontend</h1>
-        <p>This is a simple frontend</p>
-        <script> 
-          fetch ('http://backend-service:5000/visits')
+        <script>
+          fetch('http://127.0.0.1:30007/visits')
             .then(response => response.json())
             .then(data => {
-              document.body.innerHTML += `<p>${data.message} - Visitas: ${data.visits} - Modo: ${data.mode} </p>`
+              document.body.innerHTML += `<p>${data.message} - Visitas: ${data.visits} - Modo: ${data.mode}</p>`;
+            })
+            .catch(error => {
+              console.error('Error fetching data:', error);
             });
         </script>
       </body>
@@ -64,4 +66,5 @@ spec:
       targetPort: 80
       protocol: TCP
       name: http
+      nodePort: 30010
   type: NodePort

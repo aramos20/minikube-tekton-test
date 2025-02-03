@@ -1,0 +1,27 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: push-docker-image
+spec:
+  steps:
+    - name: push
+      image: gcr.io/kaniko-project/executor:latest
+      command:
+        - /kaniko/executor
+      args:
+        - --context=dir://$(workspaces.source.path)
+        - --dockerfile=$(workspaces.source.path)/Dockerfile
+        - --destination=$(params.docker-image)
+        - --oci-layout-path=/kaniko/oci-layout
+        - --insecure
+        - --skip-tls-verify
+      envFrom:
+        - secretRef:
+            name: dockerhub-credentials
+  params:
+    - name: docker-image
+      description: Docker image name to push
+      type: string
+  workspaces:
+    - name: source
+      description: The workspace with source code to build
