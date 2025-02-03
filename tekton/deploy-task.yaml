@@ -1,18 +1,24 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: deploy-to-k8s
+  name: deploy-task
 spec:
+  params:
+    - name: MANIFEST_DIR
+      description: "Directorio con los manifiestos de Kubernetes"
+      type: string
+      default: "k8s"
+  workspaces:
+    - name: source
   steps:
     - name: deploy
-      image: lachlanevenson/k8s-kubectl:latest
-      command:
-        - kubectl
-      args:
-        - apply
-        - -f
-        - k8s/backend.yaml
-        - -f
-        - k8s/frontend.yaml
-        - -f
-        - k8s/postgres.yaml
+      image: bitnami/kubectl:latest
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/sh
+        set -ex
+        kubectl apply -f $(params.MANIFEST_DIR)/backend.yaml
+        kubectl apply -f $(params.MANIFEST_DIR)/configmap.yaml
+        kubectl apply -f $(params.MANIFEST_DIR)/frontend.yaml
+        kubectl apply -f $(params.MANIFEST_DIR)/postgres.yaml
+        kubectl apply -f $(params.MANIFEST_DIR)/secrets.yaml

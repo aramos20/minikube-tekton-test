@@ -1,19 +1,13 @@
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: tekton-webhook
-  namespace: default
----
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
-  name: tekton-webhook-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
+  name: pipeline-run-access
+  namespace: default # Ajusta el namespace si es necesario
 subjects:
   - kind: ServiceAccount
-    name: tekton-webhook
-    namespace: default
+    name: your-service-account # Nombre del ServiceAccount
+    namespace: default # Namespace donde está el ServiceAccount
+roleRef:
+  kind: Role
+  name: admin # O el rol que tenga permisos suficientes para acceder al Secret
+  apiGroup: rbac.authorization.k8s.io

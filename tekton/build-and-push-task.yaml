@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-push-task
+spec:
+  params:
+    - name: IMAGE
+      description: "Nombre completo de la imagen (incluye registry y tag)"
+      type: string
+      default: "docker.io/aramos20/myapi:latest"
+    - name: CONTEXT_DIR
+      description: "Directorio donde se encuentra el Dockerfile, relativo al workspace"
+      type: string
+      default: "app"
+  workspaces:
+    - name: source
+  steps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:latest
+      workingDir: $(workspaces.source.path)/$(params.CONTEXT_DIR)
+      command:
+        - /kaniko/executor
+      args:
+        - --dockerfile=Dockerfile
+        - --context=.
+        - --destination=$(params.IMAGE)
+        - --oci-layout-path=/kaniko/oci
+        - --insecure
+        - --skip-tls-verify
+      envFrom:
+        - secretRef:
+            name: dockerhub-credentials

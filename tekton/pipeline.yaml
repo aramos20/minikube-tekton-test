@@ -1,0 +1,48 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ci-cd-pipeline
+spec:
+  params:
+    - name: IMAGE
+      type: string
+      description: "Nombre completo de la imagen (por ejemplo, docker.io/usuario/imagen:tag)"
+      default: "docker.io/aramos20/myapi:latest"
+  workspaces:
+    - name: shared-workspace
+  tasks:
+    - name: clone-repo
+      taskRef:
+        name: git-clone-task
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: "https://github.com/aramos20/test.git"
+        - name: revision
+          value: "main"
+    - name: build-and-push
+      runAfter:
+        - clone-repo
+      taskRef:
+        name: build-and-push-task
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: "$(params.IMAGE)"
+        - name: CONTEXT_DIR
+          value: "aramos20-test/app" # Cambia esto si la estructura del repo cambia
+    - name: deploy
+      runAfter:
+        - build-and-push
+      taskRef:
+        name: deploy-task
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: MANIFEST_DIR
+          value: "aramos20-test/k8s" # Cambia esto si la estructura del repo cambia

@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: tekton-pvc
+  name: source-code-pvc # Nombre del PVC que utilizaremos en el Pod
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce # Solo un Pod puede acceder al volumen en modo de escritura a la vez
   resources:
     requests:
-      storage: 2Gi
+      storage: 1Gi # Tamaño solicitado del volumen (1Gi es suficiente para estos archivos)
+  storageClassName: standard # Usamos el almacenamiento predeterminado de Minikube
