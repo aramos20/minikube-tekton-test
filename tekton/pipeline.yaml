@@ -9,32 +9,34 @@ spec:
       description: "Nombre completo de la imagen (por ejemplo, docker.io/usuario/imagen:tag)"
       default: "docker.io/aramos20/myapi:latest"
   workspaces:
-    - name: shared-workspace
+    - name: shared-workspace # Workspace único compartido
   tasks:
     - name: clone-repo
       taskRef:
         name: git-clone-task
       workspaces:
-        - name: output
-          workspace: shared-workspace
+        - name: output # Nombre del workspace en git-clone-task
+          workspace: shared-workspace # Montado en /workspace/source
       params:
         - name: url
           value: "https://github.com/aramos20/test.git"
         - name: revision
           value: "main"
+
     - name: build-and-push
       runAfter:
         - clone-repo
       taskRef:
         name: build-and-push-task
       workspaces:
-        - name: source
-          workspace: shared-workspace
+        - name: source # Nombre del workspace en build-and-push-task
+          workspace: shared-workspace # Mismo workspace que clone-repo
       params:
         - name: IMAGE
           value: "$(params.IMAGE)"
-        - name: CONTEXT_DIR
-          value: "aramos20-test/app" # Cambia esto si la estructura del repo cambia
+        - name: CONTEXT_DIR # Ruta relativa al workspace compartido
+          value: "app" # ¡Cambio clave!
+
     - name: deploy
       runAfter:
         - build-and-push
@@ -45,4 +47,4 @@ spec:
           workspace: shared-workspace
       params:
         - name: MANIFEST_DIR
-          value: "aramos20-test/k8s" # Cambia esto si la estructura del repo cambia
+          value: "aramos20-test/k8s"

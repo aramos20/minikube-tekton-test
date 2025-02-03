@@ -14,12 +14,14 @@ spec:
       default: "main"
   workspaces:
     - name: output
+      mountPath: /workspace/source
   steps:
     - name: clone
       image: alpine/git:latest
       script: |
         #!/bin/sh
         set -ex
-        git clone $(params.url) $(workspaces.output.path)
+        rm -rf $(workspaces.output.path)/*
+        git clone $(params.url) $(workspaces.output.path)/.  # Clona en la raíz del workspace
         cd $(workspaces.output.path)
         git checkout $(params.revision)

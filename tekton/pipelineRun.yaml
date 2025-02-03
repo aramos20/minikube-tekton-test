@@ -3,7 +3,7 @@ kind: PipelineRun
 metadata:
   name: ci-cd-pipeline-run
 spec:
-  serviceAccountName: your-service-account
+  serviceAccountName: tekton-service-account
   pipelineRef:
     name: ci-cd-pipeline
   workspaces:

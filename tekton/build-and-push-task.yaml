@@ -8,13 +8,24 @@ spec:
       description: "Nombre completo de la imagen (incluye registry y tag)"
       type: string
       default: "docker.io/aramos20/myapi:latest"
-    - name: CONTEXT_DIR
+    - name: CONTEXT_DIR # ⚠️ Error 1: Ruta incorrecta
       description: "Directorio donde se encuentra el Dockerfile, relativo al workspace"
       type: string
-      default: "app"
+      default: "app" # ✔️ Corrección: Usa "app" en lugar de "source/aramos20-test/app"
   workspaces:
     - name: source
+      mountPath: /workspace/source
   steps:
+    - name: debug
+      image: alpine:latest
+      script: |
+        echo "=== Estructura del Workspace ==="
+        ls -la $(workspaces.source.path)
+        echo "=== Contenido de app/ ==="
+        ls -la $(workspaces.source.path)/app
+        echo "=== Dockerfile Existe? ==="
+        cat $(workspaces.source.path)/app/Dockerfile
+
     - name: build-and-push
       image: gcr.io/kaniko-project/executor:latest
       workingDir: $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -24,9 +35,15 @@ spec:
         - --dockerfile=Dockerfile
         - --context=.
         - --destination=$(params.IMAGE)
-        - --oci-layout-path=/kaniko/oci
         - --insecure
         - --skip-tls-verify
-      envFrom:
-        - secretRef:
-            name: dockerhub-credentials
+      volumeMounts: # ✔️ Monta el Secret como volumen
+        - name: dockerhub-config
+          mountPath: /kaniko/.docker
+  volumes: # ✔️ Referencia el Secret
+    - name: dockerhub-config
+      secret:
+        secretName: dockerhub-credentials
+        items:
+          - key: .dockerconfigjson
+            path: config.json
