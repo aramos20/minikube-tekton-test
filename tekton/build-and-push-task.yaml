@@ -8,10 +8,10 @@ spec:
       description: "Nombre completo de la imagen (incluye registry y tag)"
       type: string
       default: "docker.io/aramos20/myapi:latest"
-    - name: CONTEXT_DIR # ⚠️ Error 1: Ruta incorrecta
+    - name: CONTEXT_DIR
       description: "Directorio donde se encuentra el Dockerfile, relativo al workspace"
       type: string
-      default: "app" # ✔️ Corrección: Usa "app" en lugar de "source/aramos20-test/app"
+      default: "app"
   workspaces:
     - name: source
       mountPath: /workspace/source
@@ -37,10 +37,10 @@ spec:
         - --destination=$(params.IMAGE)
         - --insecure
         - --skip-tls-verify
-      volumeMounts: # ✔️ Monta el Secret como volumen
+      volumeMounts:
         - name: dockerhub-config
           mountPath: /kaniko/.docker
-  volumes: # ✔️ Referencia el Secret
+  volumes:
     - name: dockerhub-config
       secret:
         secretName: dockerhub-credentials

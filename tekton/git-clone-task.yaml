@@ -21,7 +21,7 @@ spec:
       script: |
         #!/bin/sh
         set -ex
-        rm -rf $(workspaces.output.path)/*
-        git clone $(params.url) $(workspaces.output.path)/.  # Clona en la raíz del workspace
+        rm -rf $(workspaces.output.path)/* $(workspaces.output.path)/.[!.]* $(workspaces.output.path)/..?*
+        git clone $(params.url) $(workspaces.output.path)
         cd $(workspaces.output.path)
         git checkout $(params.revision)
