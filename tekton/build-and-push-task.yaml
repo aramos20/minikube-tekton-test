@@ -16,18 +16,26 @@ spec:
     - name: source
       mountPath: /workspace/source
   steps:
-    - name: debug
+    # - name: debug
+    #   image: alpine:latest
+    #   script: |
+    #     echo "=== Estructura del Workspace ==="
+    #     ls -la $(workspaces.source.path)
+    #     echo "=== Contenido de app/ ==="
+    #     ls -la $(workspaces.source.path)/app
+    #     echo "=== Dockerfile Existe? ==="
+    #     cat $(workspaces.source.path)/app/Dockerfile
+
+    - name: verify-credentials
       image: alpine:latest
       script: |
-        echo "=== Estructura del Workspace ==="
-        ls -la $(workspaces.source.path)
-        echo "=== Contenido de app/ ==="
-        ls -la $(workspaces.source.path)/app
-        echo "=== Dockerfile Existe? ==="
-        cat $(workspaces.source.path)/app/Dockerfile
+        echo "=== Verificando directorio /kaniko/.docker ==="
+        ls -la /kaniko
+        echo "=== Contenido de /kaniko/.docker/config.json ==="
+        cat /kaniko/.docker/config.json || echo "El archivo no existe"
 
     - name: build-and-push
-      image: gcr.io/kaniko-project/executor:latest
+      image: gcr.io/kaniko-project/executor:v1.23.2-debug
       workingDir: $(workspaces.source.path)/$(params.CONTEXT_DIR)
       command:
         - /kaniko/executor
@@ -37,6 +45,7 @@ spec:
         - --destination=$(params.IMAGE)
         - --insecure
         - --skip-tls-verify
+        - --verbosity=debug
       volumeMounts:
         - name: dockerhub-config
           mountPath: /kaniko/.docker
@@ -46,4 +55,4 @@ spec:
         secretName: dockerhub-credentials
         items:
           - key: .dockerconfigjson
-            path: config.json
+            path: .docker/config.json
