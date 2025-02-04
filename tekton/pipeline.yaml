@@ -8,35 +8,30 @@ spec:
       type: string
       default: "docker.io/aramos20/myapi:latest"
   workspaces:
-    - name: source-workspace
-    - name: artifacts-workspace
+    - name: shared-workspace # Solo un workspace para todo
   tasks:
     - name: clone-repo
       taskRef:
         name: git-clone-task
       workspaces:
         - name: output
-          workspace: source-workspace
+          workspace: shared-workspace
 
     - name: build-and-push
-      runAfter:
-        - clone-repo
+      runAfter: [clone-repo]
       taskRef:
         name: build-and-push-task
       workspaces:
         - name: source
-          workspace: source-workspace
-        - name: artifacts
-          workspace: artifacts-workspace
+          workspace: shared-workspace
       params:
         - name: IMAGE
           value: "$(params.IMAGE)"
 
     - name: deploy
-      runAfter:
-        - build-and-push
+      runAfter: [build-and-push]
       taskRef:
         name: deploy-task
       workspaces:
         - name: source
-          workspace: source-workspace
+          workspace: shared-workspace
