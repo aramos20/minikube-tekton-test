@@ -46,7 +46,7 @@ spec:
     - name: source
       mountPath: /workspace/source
     - name: artifacts
-      mountPath: /workspace/artifacts # Cambié esta ruta para que sea única
+      mountPath: /workspace/artifacts
   steps:
     - name: kaniko-build
       image: gcr.io/kaniko-project/executor:debug

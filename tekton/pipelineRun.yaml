@@ -11,7 +11,7 @@ spec:
         claimName: tekton-pvc
     - name: artifacts-workspace
       persistentVolumeClaim:
-        claimName: tekton-pvc-artifacts # Usamos el nuevo PVC
+        claimName: tekton-pvc-artifacts
   params:
     - name: IMAGE
       value: "docker.io/aramos20/myapi:latest"
