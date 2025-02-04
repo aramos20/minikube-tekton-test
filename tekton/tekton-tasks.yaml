@@ -44,13 +44,13 @@ spec:
       default: "app"
   workspaces:
     - name: source
-      mountPath: /workspace/source
+      mountPath: /workspace
     - name: artifacts
       mountPath: /workspace/artifacts
   steps:
     - name: kaniko-build
       image: gcr.io/kaniko-project/executor:debug
-      workingDir: /workspace/source
+      workingDir: /workspace
       command:
         - /kaniko/executor
       args:
@@ -96,7 +96,7 @@ spec:
       default: "k8s"
   workspaces:
     - name: source
-      mountPath: /workspace/source
+      mountPath: /workspace
   steps:
     - name: deploy
       image: bitnami/kubectl:latest
