@@ -14,14 +14,22 @@ spec:
       default: "main"
   workspaces:
     - name: output
-      mountPath: /workspace/source
+      mountPath: /workspace # Monta el workspace en /workspace
   steps:
     - name: clone
       image: alpine/git:latest
+      workingDir: /workspace # Establece el directorio de trabajo dentro del workspace
       script: |
         #!/bin/sh
         set -ex
-        rm -rf $(workspaces.output.path)/* $(workspaces.output.path)/.[!.]* $(workspaces.output.path)/..?*
-        git clone $(params.url) $(workspaces.output.path)
-        cd $(workspaces.output.path)
+        # Limpiar el directorio antes de clonar (más robusto)
+        rm -rf * .[!.]* ..?*  # Limpia dentro del workingDir /workspace
+        git clone $(params.url) . # Clona en el directorio de trabajo actual
         git checkout $(params.revision)
+        # ls -la # Lista el contenido del directorio clonado
+        # echo "=== Archivos en el directorio app/ ==="
+        # ls -la app
+        # echo "=== Dockerfile Existe? ==="
+        # cat app/Dockerfile || echo "Dockerfile no encontrado"
+        # echo "=== requirements.txt Existe? ==="
+        # cat app/requirements.txt || echo "requirements.txt no encontrado"

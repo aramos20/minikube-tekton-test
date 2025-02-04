@@ -5,54 +5,48 @@ metadata:
 spec:
   params:
     - name: IMAGE
-      description: "Nombre completo de la imagen (incluye registry y tag)"
+      description: "Nombre completo de la imagen"
       type: string
       default: "docker.io/aramos20/myapi:latest"
     - name: CONTEXT_DIR
-      description: "Directorio donde se encuentra el Dockerfile, relativo al workspace"
+      description: "Directorio del Dockerfile (relativo al workspace)"
       type: string
       default: "app"
   workspaces:
     - name: source
       mountPath: /workspace/source
+    - name: artifacts
+      mountPath: /artifacts
   steps:
-    # - name: debug
-    #   image: alpine:latest
-    #   script: |
-    #     echo "=== Estructura del Workspace ==="
-    #     ls -la $(workspaces.source.path)
-    #     echo "=== Contenido de app/ ==="
-    #     ls -la $(workspaces.source.path)/app
-    #     echo "=== Dockerfile Existe? ==="
-    #     cat $(workspaces.source.path)/app/Dockerfile
-
-    - name: verify-credentials
-      image: alpine:latest
-      script: |
-        echo "=== Verificando directorio /kaniko/.docker ==="
-        ls -la /kaniko
-        echo "=== Contenido de /kaniko/.docker/config.json ==="
-        cat /kaniko/.docker/config.json || echo "El archivo no existe"
-
-    - name: build-and-push
-      image: gcr.io/kaniko-project/executor:v1.23.2-debug
-      workingDir: $(workspaces.source.path)/$(params.CONTEXT_DIR)
+    - name: kaniko-build
+      image: gcr.io/kaniko-project/executor:debug
+      workingDir: /workspace/source # Cambia al directorio raíz del workspace
       command:
         - /kaniko/executor
       args:
-        - --dockerfile=Dockerfile
-        - --context=.
+        - --dockerfile=$(params.CONTEXT_DIR)/Dockerfile # Ruta completa al Dockerfile
+        - --context=/workspace/source # Contexto es el workspace completo
+        - --no-push
         - --destination=$(params.IMAGE)
-        - --insecure
-        - --skip-tls-verify
-        - --verbosity=debug
-      volumeMounts:
-        - name: dockerhub-config
-          mountPath: /kaniko/.docker
-  volumes:
-    - name: dockerhub-config
-      secret:
-        secretName: dockerhub-credentials
-        items:
-          - key: .dockerconfigjson
-            path: .docker/config.json
+        - --tar-path=/artifacts/image.tar
+
+    # Step 2: Push con Crane
+    - name: crane-push
+      image: gcr.io/go-containerregistry/crane:debug
+      script: |
+        # Autenticación en Docker Hub usando variables de entorno
+        crane auth login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" docker.io
+
+        # Push del archivo .tar
+        crane push /artifacts/image.tar $(params.IMAGE)
+      env:
+        - name: DOCKER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: dockerhub-credentials
+              key: username # Asegúrate de que el Secret tenga esta clave
+        - name: DOCKER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dockerhub-credentials
+              key: password # Asegúrate de que el Secret tenga esta clave

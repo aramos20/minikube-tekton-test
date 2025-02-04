@@ -3,13 +3,14 @@ kind: PipelineRun
 metadata:
   name: ci-cd-pipeline-run
 spec:
-  serviceAccountName: tekton-service-account
   pipelineRef:
     name: ci-cd-pipeline
   workspaces:
-    - name: shared-workspace
+    - name: source
       persistentVolumeClaim:
         claimName: tekton-pvc
+    - name: artifacts
+      emptyDir: {} # Volumen temporal para compartir el .tar entre steps
   params:
     - name: IMAGE
       value: "docker.io/aramos20/myapi:latest"
