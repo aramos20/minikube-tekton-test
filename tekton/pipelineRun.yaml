@@ -6,12 +6,9 @@ spec:
   pipelineRef:
     name: ci-cd-pipeline
   workspaces:
-    - name: shared-workspace # Este es el Workspace que requiere el Pipeline
+    - name: shared-workspace
       persistentVolumeClaim:
-        claimName: tekton-pvc # Usa el PVC que ya tienes configurado
-    - name: artifacts-workspace
-      persistentVolumeClaim:
-        claimName: tekton-pvc-artifacts # El PVC para los artifacts de Kaniko
+        claimName: tekton-pvc
   params:
     - name: IMAGE
       value: "docker.io/aramos20/myapi:latest"

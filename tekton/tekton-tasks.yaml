@@ -60,8 +60,6 @@ spec:
         - --context=/workspace
         - --destination=$(params.IMAGE)
         - --verbosity=debug
-        - --insecure
-        - --skip-tls-verify
       volumeMounts:
         - name: kaniko-secret
           mountPath: /kaniko/.docker
@@ -101,7 +99,6 @@ spec:
         #!/bin/sh
         set -ex
         kubectl apply -f configmap.yaml
-        kubectl apply -f secrets.yaml
         kubectl apply -f postgres.yaml
         kubectl apply -f backend.yaml
         kubectl apply -f frontend.yaml
