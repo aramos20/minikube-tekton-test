@@ -22,8 +22,15 @@ spec:
       script: |
         #!/bin/sh
         set -ex
+        rm -rf /workspace/* /workspace/.[!.]* /workspace/..?*
         git clone $(params.url) . 
         git checkout $(params.revision)
+        if [ ! -f /workspace/app/Dockerfile ]; then
+          echo "Error: Dockerfile no encontrado en la carpeta app"
+          exit 1
+        fi
+
+        echo "Dockerfile encontrado en /workspace/app/Dockerfile"
 
 ---
 apiVersion: tekton.dev/v1beta1
