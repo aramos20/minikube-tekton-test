@@ -15,7 +15,7 @@ spec:
     spec:
       serviceAccountName: tekton-service-account
       imagePullSecrets:
-        - name: dockerhub-credentials
+        - name: regcred
       containers:
         - name: backend
           image: docker.io/aramos20/myapi:latest
