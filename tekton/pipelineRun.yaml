@@ -6,11 +6,13 @@ spec:
   pipelineRef:
     name: ci-cd-pipeline
   workspaces:
-    - name: source
+    - name: source-workspace # Nombre consistente
       persistentVolumeClaim:
         claimName: tekton-pvc
-    - name: artifacts
-      emptyDir: {} # Volumen temporal para compartir el .tar entre steps
+    - name: artifacts-workspace # Nombre consistente - ¡CAMBIADO!
+      persistentVolumeClaim: # Usamos un PVC también para artifacts
+        claimName: tekton-pvc # Puedes usar el mismo PVC si quieres
+        # o crear uno especifico para artifacts
   params:
     - name: IMAGE
       value: "docker.io/aramos20/myapi:latest"
