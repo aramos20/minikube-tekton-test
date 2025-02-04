@@ -31,3 +31,12 @@ spec:
       params:
         - name: IMAGE
           value: "$(params.IMAGE)"
+
+    - name: deploy
+      runAfter: # Ejecutar después de build-and-push
+        - build-and-push
+      taskRef:
+        name: deploy-task
+      workspaces:
+        - name: source
+          workspace: source # El deploy task necesita acceso al repo clonado

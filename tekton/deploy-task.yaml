@@ -5,15 +5,16 @@ metadata:
 spec:
   params:
     - name: MANIFEST_DIR
-      description: "Directorio con los manifiestos de Kubernetes"
+      description: "Directorio con los manifiestos de Kubernetes (relativo al workspace)"
       type: string
       default: "k8s"
   workspaces:
-    - name: source
+    - name: source # Nombre del workspace
+      mountPath: /workspace/source # Path dentro del contenedor
   steps:
     - name: deploy
       image: bitnami/kubectl:latest
-      workingDir: $(workspaces.source.path)
+      workingDir: /workspace/source # Importante: workingDir dentro del workspace
       script: |
         #!/bin/sh
         set -ex

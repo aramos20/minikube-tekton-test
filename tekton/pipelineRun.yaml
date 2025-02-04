@@ -6,13 +6,13 @@ spec:
   pipelineRef:
     name: ci-cd-pipeline
   workspaces:
-    - name: source-workspace # Nombre consistente
+    - name: source-workspace
       persistentVolumeClaim:
         claimName: tekton-pvc
-    - name: artifacts-workspace # Nombre consistente - ¡CAMBIADO!
-      persistentVolumeClaim: # Usamos un PVC también para artifacts
-        claimName: tekton-pvc # Puedes usar el mismo PVC si quieres
-        # o crear uno especifico para artifacts
+    - name: artifacts-workspace
+      persistentVolumeClaim:
+        claimName: tekton-pvc # O un PVC diferente si lo prefieres
   params:
     - name: IMAGE
       value: "docker.io/aramos20/myapi:latest"
+  serviceAccountName: tekton-service-account # Añade el service account
