@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tekton-pvc-artifacts # Nombre diferente
+spec:
+  accessModes:
+    - ReadWriteMany # O ReadWriteOnce si solo una tarea escribe en él
+  resources:
+    requests:
+      storage: 2Gi

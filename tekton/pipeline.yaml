@@ -8,15 +8,15 @@ spec:
       type: string
       default: "docker.io/aramos20/myapi:latest"
   workspaces:
-    - name: source
-    - name: artifacts
+    - name: source-workspace # Nombre consistente
+    - name: artifacts-workspace # Nombre consistente
   tasks:
     - name: clone-repo
       taskRef:
         name: git-clone-task
       workspaces:
         - name: output
-          workspace: source
+          workspace: source-workspace # Nombre consistente
 
     - name: build-and-push
       runAfter:
@@ -25,18 +25,18 @@ spec:
         name: build-and-push-task
       workspaces:
         - name: source
-          workspace: source
+          workspace: source-workspace # Nombre consistente
         - name: artifacts
-          workspace: artifacts
+          workspace: artifacts-workspace # Nombre consistente
       params:
         - name: IMAGE
           value: "$(params.IMAGE)"
 
     - name: deploy
-      runAfter: # Ejecutar después de build-and-push
+      runAfter:
         - build-and-push
       taskRef:
         name: deploy-task
       workspaces:
         - name: source
-          workspace: source # El deploy task necesita acceso al repo clonado
+          workspace: source-workspace # Nombre consistente
