@@ -13,13 +13,20 @@ spec:
       labels:
         app: backend
     spec:
-      serviceAccountName: tekton-service-account # ¡Agregado!
+      serviceAccountName: tekton-service-account
       imagePullSecrets:
-        - name: dockerhub-credentials # ¡Agregado!
+        - name: dockerhub-credentials
       containers:
         - name: backend
           image: docker.io/aramos20/myapi:latest
           imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+            requests:
+              cpu: "1"
+              memory: "1Gi
           ports:
             - containerPort: 5000
           env:

@@ -54,7 +54,7 @@ def init_db():
         cursor.execute("SELECT COUNT(*) FROM config")
         row_count = cursor.fetchone()[0]
         if row_count == 0:
-            cursor.execute("INSERT INTO config (environment) VALUES ('develop')")
+            cursor.execute("INSERT INTO config (environment) VALUES ('release')")
 
         conn.commit()
         cursor.close()
