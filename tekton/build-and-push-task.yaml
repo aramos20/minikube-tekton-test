@@ -33,20 +33,22 @@ spec:
     # Step 2: Push con Crane
     - name: crane-push
       image: gcr.io/go-containerregistry/crane:debug
-      script: |
-        # Autenticación en Docker Hub usando variables de entorno
-        crane auth login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" docker.io
-
-        # Push del archivo .tar
-        crane push /artifacts/image.tar $(params.IMAGE)
+      command: ["/bin/sh", "-c"] # Usamos /bin/sh para ejecutar múltiples comandos
+      args:
+        - |
+          crane auth login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" docker.io
+          crane push /artifacts/image.tar $(params.IMAGE) # Asegúrate de la ruta
       env:
         - name: DOCKER_USERNAME
           valueFrom:
             secretKeyRef:
-              name: dockerhub-credentials
-              key: username # Asegúrate de que el Secret tenga esta clave
+              name: dockerhub-credentials # Nombre del Secret
+              key: username # Clave dentro del Secret
         - name: DOCKER_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: dockerhub-credentials
-              key: password # Asegúrate de que el Secret tenga esta clave
+              name: dockerhub-credentials # Nombre del Secret
+              key: password # Clave dentro del Secret
+      volumeMounts: # Asegúrate de que el volumen artifacts esté montado
+        - name: artifacts # Nombre del volumen
+          mountPath: /artifacts # Debe coincidir con el mountPath del workspace
