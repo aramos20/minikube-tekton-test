@@ -26,13 +26,6 @@ spec:
         rm -rf * .[!.]* ..?*
         git clone $(params.url) . # Clona en el directorio de trabajo actual
         git checkout $(params.revision)
-        # ls -la # Lista el contenido del directorio clonado
-        # echo "=== Archivos en el directorio app/ ==="
-        # ls -la app
-        # echo "=== Dockerfile Existe? ==="
-        # cat app/Dockerfile || echo "Dockerfile no encontrado"
-        # echo "=== requirements.txt Existe? ==="
-        # cat app/requirements.txt || echo "requirements.txt no encontrado"
 
 ---
 apiVersion: tekton.dev/v1beta1
@@ -53,7 +46,7 @@ spec:
     - name: source
       mountPath: /workspace/source
     - name: artifacts
-      mountPath: /workspace/build-artifacts
+      mountPath: /workspace/artifacts # Cambié esta ruta para que sea única
   steps:
     - name: kaniko-build
       image: gcr.io/kaniko-project/executor:debug
@@ -65,10 +58,11 @@ spec:
         - --context=/workspace/source
         - --no-push
         - --destination=$(params.IMAGE)
-        - --tar-path=/workspace/build-artifacts/image.tar
-        - --insecure
-        - --skip-tls-verify
-        - --verbosity=debug
+        - --tar-path=/workspace/artifacts/image.tar
+        - --verbosity=debug # Agregar más detalles de depuración
+        - --retries=3 # Reintentar si falla
+        - --skip-unused # Ignorar archivos no utilizados
+        - --insecure # Permitir conexiones inseguras
 
     - name: crane-push
       image: gcr.io/go-containerregistry/crane:debug
@@ -76,7 +70,7 @@ spec:
       args:
         - |
           crane auth login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" docker.io
-          crane push /workspace/build-artifacts/image.tar $(params.IMAGE)
+          crane push /workspace/artifacts/image.tar $(params.IMAGE)
       env:
         - name: DOCKER_USERNAME
           valueFrom:
@@ -88,9 +82,6 @@ spec:
             secretKeyRef:
               name: dockerhub-credentials
               key: password
-      volumeMounts:
-        - name: artifacts
-          mountPath: /workspace/build-artifacts
 
 ---
 apiVersion: tekton.dev/v1beta1
