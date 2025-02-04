@@ -22,9 +22,7 @@ spec:
       script: |
         #!/bin/sh
         set -ex
-        # Limpiar el directorio antes de clonar (más robusto)
-        rm -rf * .[!.]* ..?*
-        git clone $(params.url) . # Clona en el directorio de trabajo actual
+        git clone $(params.url) . 
         git checkout $(params.revision)
 
 ---
@@ -59,11 +57,7 @@ spec:
         - --no-push
         - --destination=$(params.IMAGE)
         - --tar-path=/workspace/artifacts/image.tar
-        - --verbosity=debug # Agregar más detalles de depuración
-        - --retries=3 # Reintentar si falla
-        - --skip-unused # Ignorar archivos no utilizados
-        - --insecure # Permitir conexiones inseguras
-
+        - --verbosity=debug
     - name: crane-push
       image: gcr.io/go-containerregistry/crane:debug
       command: ["/bin/sh", "-c"]
