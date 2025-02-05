@@ -1,6 +1,6 @@
 # Tekton Pipelines para CI/CD
 
-Este repositorio contiene definiciones de Tekton Pipelines para implementar un flujo de Integración Continua y Entrega Continua (CI/CD) para una aplicación.  El pipeline clona un repositorio Git, construye y publica una imagen Docker, y despliega la aplicación en Kubernetes.
+Este repositorio contiene definiciones de Tekton Pipelines para implementar un flujo de Integración Continua y Entrega Continua (CI/CD) para una aplicación.  El pipeline clona un repositorio Git, construye y publica una imagen Docker a Docker Hyb, y despliega la aplicación en Kubernetes.
 
 ## Descripción de los Archivos
 
@@ -27,14 +27,14 @@ Define los recursos de infraestructura necesarios para Tekton:
 
 ### `tekton-service-account.yaml`
 
-Define la cuenta de servicio `tekton-service-account` que se utiliza para ejecutar el pipeline.  Asocia el secreto `dockerhub-credentials` a esta cuenta de servicio.
+Define la cuenta de servicio `tekton-service-account` que se utiliza para ejecutar el pipeline.  Asocia el secreto `regcred` a esta cuenta de servicio.
 
 ### `tekton-tasks.yaml`
 
 Define las tareas que componen el pipeline:
 
 *   **`git-clone-task`**: Clona un repositorio Git.  Recibe como parámetros la URL del repositorio (`url`) y la revisión (`revision`).  Verifica la existencia del archivo `Dockerfile` dentro de la carpeta `app` del repositorio clonado.
-*   **`build-and-push-task`**: Construye y publica una imagen Docker utilizando Kaniko.  Recibe como parámetro el nombre de la imagen (`IMAGE`) y el directorio del Dockerfile (`CONTEXT_DIR`). Utiliza el secreto `regcred` para la autenticación con Docker Hub.  Se configura para usar `insecure` y `skip-tls-verify`, lo cual no es recomendable en producción.
+*   **`build-and-push-task`**: Construye y publica una imagen Docker utilizando Kaniko. Recibe como parámetro el nombre de la imagen (`IMAGE`) y el directorio del Dockerfile (`CONTEXT_DIR`). Utiliza el secreto `regcred` para la autenticación con Docker Hub.
 *   **`deploy-task`**: Despliega la aplicación en Kubernetes.  Copia los archivos de manifiesto desde el directorio especificado por el parámetro `MANIFEST_DIR` y los aplica con `kubectl apply`.  Los manifiestos de Kubernetes (configmap.yaml, postgres.yaml, backend.yaml, frontend.yaml) deben estar presentes en el workspace.
 
 ## Uso
@@ -49,12 +49,11 @@ Define las tareas que componen el pipeline:
 
     ```bash
     minikube addons enable ingress
-    minikube addons enable registry  # Si usas un registro de imágenes local en Minikube
     ```
 
-    El addon `ingress` permite exponer servicios a través de un Ingress, y el addon `registry` habilita un registro de imágenes local en Minikube.
+    El addon `ingress` permite exponer servicios a través de un Ingress.
 
-3.  **Creación de Secret para Kaniko:** Kaniko necesita credenciales para acceder al registro de Docker Hub. Crea un secret llamado `docker-credential` con tus credenciales:
+3.  **Creación de Secret para Kaniko:** Kaniko necesita credenciales para acceder al registro de Docker Hub. Crea un secret llamado `regcred` con tus credenciales:
 
     ```bash
     kubectl create secret docker-registry regcred \
@@ -89,7 +88,7 @@ Define las tareas que componen el pipeline:
 
 ## Notas Importantes
 
-*   **Seguridad**:  Las configuraciones `insecure` y `skip-tls-verify` en `build-and-push-task` y el uso del rol `admin` en RoleBinding y ClusterRoleBinding no son recomendables para entornos de producción.  Deben ajustarse para mayor seguridad.
+*   **Seguridad**:  El uso del rol `admin` en RoleBinding y ClusterRoleBinding no son recomendables para entornos de producción.  Deben ajustarse para mayor seguridad.
 *   **Credenciales**: Asegúrate de que el secreto `regcred` contenga las credenciales correctas de Docker Hub.
 *   **Manifiestos de Kubernetes**: Los manifiestos de Kubernetes para la aplicación (configmap.yaml, postgres.yaml, backend.yaml, frontend.yaml) deben estar presentes en el directorio especificado por el parámetro `MANIFEST_DIR` en `deploy-task`.
 *   **Workspace**: El `persistentVolumeClaim` `tekton-pvc` debe existir y tener suficiente espacio disponible.

@@ -8,7 +8,7 @@ spec:
       type: string
       default: "docker.io/aramos20/myapi:latest"
   workspaces:
-    - name: shared-workspace # Solo un workspace para todo
+    - name: shared-workspace
   tasks:
     - name: clone-repo
       taskRef:

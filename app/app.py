@@ -6,13 +6,11 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 CORS(app)
 
-# Configuración de la base de datos
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_NAME = os.getenv('DB_NAME', 'database')
 DB_USER = os.getenv('DB_USER', 'user')
 DB_PASS = os.getenv('DB_PASS', 'password')
 
-# Conexión a la DB
 def get_db_conn():
     conn = psycopg2.connect(
         host=DB_HOST,
@@ -22,13 +20,11 @@ def get_db_conn():
     )
     return conn
 
-# Primeras configuraciones DB
 def init_db():
     try:
         conn = get_db_conn()
         cursor = conn.cursor()
 
-        # Tabla para contar visitas
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS visits (
                 id SERIAL PRIMARY KEY,
@@ -36,7 +32,6 @@ def init_db():
             )
         ''')
 
-        # Tabla para indicar el modo (develop o release)
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS config (
                 id SERIAL PRIMARY KEY,
@@ -44,13 +39,11 @@ def init_db():
             )
         ''')
 
-        # Colocar registro en la tabla visits
         cursor.execute("SELECT COUNT(*) FROM visits")
         row_count = cursor.fetchone()[0]
         if row_count == 0:
             cursor.execute("INSERT INTO visits (count) VALUES (0)")
 
-        # Insertar registro en la tabla config
         cursor.execute("SELECT COUNT(*) FROM config")
         row_count = cursor.fetchone()[0]
         if row_count == 0:
@@ -65,21 +58,17 @@ def init_db():
 
 init_db()
 
-# Endpoint /visits
 @app.route('/visits', methods=['GET'])
 def visits():
     conn = get_db_conn()
     cursor = conn.cursor()
 
-    # Incremento del contador de visitas
     cursor.execute('UPDATE visits SET count = count + 1 WHERE id = 1')
     conn.commit()
 
-    # Obtener número de visitas
     cursor.execute('SELECT count FROM visits WHERE id = 1')
     visit_count = cursor.fetchone()[0]
 
-    # Modo del sistema
     cursor.execute('SELECT environment FROM config WHERE id = 1')
     mode = cursor.fetchone()[0]
 

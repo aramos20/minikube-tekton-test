@@ -31,7 +31,7 @@ Este repositorio contiene los manifiestos de Kubernetes para desplegar una aplic
 
    Contiene las variables de entorno necesarias para la conexión a la base de datos PostgreSQL:
 
-   * `DB_HOST`: Nombre del servicio de PostgreSQL (`postgres`).
+   * `DB_HOST`: Nombre del servicio de PostgreSQL.
    * `DB_NAME`: Nombre de la base de datos.
    * `DB_USER`: Usuario para conectarse a la base de datos.
 
