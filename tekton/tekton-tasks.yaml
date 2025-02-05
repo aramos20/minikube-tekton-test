@@ -98,7 +98,4 @@ spec:
       script: |
         #!/bin/sh
         set -ex
-        kubectl apply -f configmap.yaml
-        kubectl apply -f postgres.yaml
-        kubectl apply -f backend.yaml
-        kubectl apply -f frontend.yaml
+        kubectl apply -f .

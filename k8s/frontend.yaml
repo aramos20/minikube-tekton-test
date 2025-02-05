@@ -16,9 +16,6 @@ data:
             .then(response => response.json())
             .then(data => {
               document.body.innerHTML += `<p>${data.message} - Visitas: ${data.visits} - Modo: ${data.mode}</p>`;
-            })
-            .catch(error => {
-              console.error('Error fetching data:', error);
             });
         </script>
       </body>

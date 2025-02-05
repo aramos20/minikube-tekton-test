@@ -4,6 +4,7 @@ Este proyecto incluye una aplicación **Flask** que se despliega en un clúster 
 
 ## Estructura del Proyecto
 
+```bash
 ./ 
 ├── app/ # Código de la aplicación 
 │ ├── app.py # Archivo principal de la aplicación Flask 
@@ -21,6 +22,7 @@ Este proyecto incluye una aplicación **Flask** que se despliega en un clúster 
   ├── tekton-infra.yaml # Configuración de la infraestructura de Tekton
   ├── tekton-service-account.yaml/ # Configuración de la cuenta de servicio
   └── tekton-tasks.yaml/ # Tareas de Tekton
+```
 
 La estructura del proyecto está organizada en tres directorios principales:
 
