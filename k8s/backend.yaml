@@ -13,23 +13,22 @@ spec:
       labels:
         app: backend
     spec:
-      serviceAccountName: tekton-service-account
-      imagePullSecrets:
-        - name: regcred
       containers:
         - name: backend
           image: docker.io/aramos20/myapi:latest
           imagePullPolicy: Always
           resources:
             limits:
-              cpu: "2"
-              memory: "2Gi"
-            requests:
               cpu: "1"
               memory: "1Gi"
           ports:
             - containerPort: 5000
           env:
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: DB_PASS
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
@@ -45,11 +44,6 @@ spec:
                 configMapKeyRef:
                   name: db-config
                   key: DB_USER
-            - name: DB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: DB_PASS
 ---
 apiVersion: v1
 kind: Service
