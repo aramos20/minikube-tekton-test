@@ -40,8 +40,8 @@ spec:
           image: nginx:alpine
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              memory: "128Mi"
+              cpu: "500m"
           ports:
             - containerPort: 80
           volumeMounts:
