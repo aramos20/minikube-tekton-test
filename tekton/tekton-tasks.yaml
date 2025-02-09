@@ -42,10 +42,6 @@ spec:
       description: "Nombre completo de la imagen"
       type: string
       default: "docker.io/aramos20/myapi:latest"
-    - name: CONTEXT_DIR
-      description: "Directorio del Dockerfile (relativo al workspace)"
-      type: string
-      default: "app"
   workspaces:
     - name: source
       mountPath: /workspace
@@ -56,7 +52,7 @@ spec:
       command:
         - /kaniko/executor
       args:
-        - --dockerfile=$(params.CONTEXT_DIR)/Dockerfile
+        - --dockerfile=Dockerfile
         - --context=/workspace
         - --destination=$(params.IMAGE)
         - --verbosity=debug
