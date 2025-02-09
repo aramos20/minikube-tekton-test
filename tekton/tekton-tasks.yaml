@@ -25,7 +25,7 @@ spec:
         rm -rf /workspace/* /workspace/.[!.]* /workspace/..?*
         git clone $(params.url) . 
         git checkout $(params.revision)
-        if [ ! -f /workspace/app/Dockerfile ]; then
+        if [ ! -f /workspace/Dockerfile ]; then
           echo "Error: Dockerfile no encontrado en la carpeta app"
           exit 1
         fi
