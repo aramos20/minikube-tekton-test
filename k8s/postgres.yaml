@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: postgres
+        environment: release
     spec:
       containers:
         - name: postgres

@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,11 +11,12 @@ spec:
     metadata:
       labels:
         app: backend
+        environment: release
     spec:
       containers:
         - name: backend
           image: docker.io/aramos20/myapi:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             limits:
               memory: "128Mi"
