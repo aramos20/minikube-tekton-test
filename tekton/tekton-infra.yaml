@@ -24,9 +24,9 @@ metadata:
   name: admin-role
   namespace: default
 rules:
-  - apiGroups: ["*"]
-    resources: ["*"]
-    verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -36,6 +36,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: tekton-service-account
+    apiGroup: ""
     namespace: default
 roleRef:
   kind: Role

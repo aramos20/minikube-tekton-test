@@ -24,7 +24,9 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  labels:
+    app: frontend
+  name: frontend
 spec:
   replicas: 1
   selector:

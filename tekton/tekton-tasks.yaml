@@ -27,7 +27,6 @@ spec:
         git checkout $(params.revision)
 ---
 apiVersion: tekton.dev/v1beta1
-kind: Task
 metadata:
   name: build-and-push-task
 spec:
@@ -49,7 +48,6 @@ spec:
         - --dockerfile=Dockerfile
         - --context=/workspace
         - --destination=$(params.IMAGE)
-        - --verbosity=debug
       volumeMounts:
         - name: kaniko-secret
           mountPath: /kaniko/.docker
@@ -75,7 +73,7 @@ spec:
       workingDir: /workspace
       script: |
         #!/bin/sh
-        set -ex
+        set -e
         kubectl apply -f k8s/configmap.yaml
         kubectl apply -f k8s/postgres.yaml
         kubectl apply -f k8s/backend.yaml
