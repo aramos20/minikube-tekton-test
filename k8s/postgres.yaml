@@ -17,8 +17,8 @@ spec:
         environment: release
     spec:
       containers:
-        - name: postgres
-          image: postgres:alpine
+        - image: postgres:alpine
+          name: postgres
           ports:
             - containerPort: 5432
           volumeMounts:

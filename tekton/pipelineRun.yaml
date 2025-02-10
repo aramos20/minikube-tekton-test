@@ -10,6 +10,6 @@ spec:
       persistentVolumeClaim:
         claimName: tekton-pvc
   params:
-    - name: IMAGE
+    - name: image
       value: "docker.io/aramos20/myapi:latest"
   serviceAccountName: tekton-service-account

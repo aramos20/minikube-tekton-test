@@ -39,8 +39,8 @@ spec:
         environment: release
     spec:
       containers:
-        - name: frontend
-          image: nginx:alpine
+        - image: nginx:alpine
+          name: frontend
           resources:
             limits:
               memory: "128Mi"

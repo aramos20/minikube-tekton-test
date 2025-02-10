@@ -8,10 +8,6 @@ spec:
       type: string
       description: "URL del repositorio Git"
       default: "https://github.com/aramos20/test.git"
-    - name: revision
-      type: string
-      description: "Branch o commit a clonar"
-      default: "main"
   workspaces:
     - name: output
       mountPath: /workspace
@@ -24,7 +20,7 @@ spec:
         set -e
         rm -rf /workspace/* /workspace/.[!.]* /workspace/..?*
         git clone $(params.url) . 
-        git checkout $(params.revision)
+        git checkout main
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
@@ -32,8 +28,7 @@ metadata:
   name: build-and-push-task
 spec:
   params:
-    - name: IMAGE
-      description: "Nombre completo de la imagen"
+    - name: image
       type: string
       default: "docker.io/aramos20/myapi:latest"
   workspaces:
@@ -48,7 +43,7 @@ spec:
       args:
         - --dockerfile=Dockerfile
         - --context=/workspace
-        - --destination=$(params.IMAGE)
+        - --destination=$(params.image)
       volumeMounts:
         - name: kaniko-secret
           mountPath: /kaniko/.docker
