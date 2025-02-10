@@ -16,8 +16,8 @@ spec:
         environment: release
     spec:
       containers:
-        - name: backend
-          image: docker.io/aramos20/myapi:latest
+        - image: docker.io/aramos20/myapi:latest
+          name: backend
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -55,9 +55,9 @@ spec:
   selector:
     app: backend
   ports:
-    - protocol: TCP
+    - name: backend
       port: 5000
       targetPort: 5000
-      name: backend
+      protocol: TCP
       nodePort: 30007
   type: NodePort
