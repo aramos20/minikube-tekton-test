@@ -27,6 +27,7 @@ spec:
         git checkout $(params.revision)
 ---
 apiVersion: tekton.dev/v1beta1
+kind: Task
 metadata:
   name: build-and-push-task
 spec:

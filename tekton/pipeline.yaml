@@ -4,7 +4,7 @@ metadata:
   name: ci-cd-pipeline
 spec:
   params:
-    - name: IMAGE
+    - name: image
       type: string
       default: "docker.io/aramos20/myapi:latest"
   workspaces:
