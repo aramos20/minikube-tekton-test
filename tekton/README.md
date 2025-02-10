@@ -74,10 +74,10 @@ Define las tareas que componen el pipeline:
 5.  **Aplicación de los recursos:**
 
     ```bash
-    kubectl apply -f tekton/pipeline.yaml
     kubectl apply -f tekton/tekton-infra.yaml
     kubectl apply -f tekton/tekton-service-account.yaml
     kubectl apply -f tekton/tekton-tasks.yaml
+    kubectl apply -f tekton/pipeline.yaml
     ```
 
 6.  **Ejecución del Pipeline:**
