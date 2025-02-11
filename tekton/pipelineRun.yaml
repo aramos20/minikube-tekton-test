@@ -9,7 +9,4 @@ spec:
     - name: shared-workspace
       persistentVolumeClaim:
         claimName: tekton-pvc
-  params:
-    - name: image
-      value: "docker.io/aramos20/myapi:latest"
   serviceAccountName: tekton-service-account

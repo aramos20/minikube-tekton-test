@@ -24,9 +24,6 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-      params:
-        - name: image
-          value: "$(params.image)"
 
     - name: deploy
       runAfter: [build-and-push]
