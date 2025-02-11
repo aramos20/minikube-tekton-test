@@ -27,7 +27,7 @@ metadata:
   name: build-and-push-task
 spec:
   params:
-    - name: image
+    - name: registry
       type: string
       default: "docker.io/aramos20/myapi:latest"
   workspaces:
@@ -42,7 +42,7 @@ spec:
       args:
         - --dockerfile=Dockerfile
         - --context=/workspace
-        - --destination=$(params.image)
+        - --destination=$(params.registry)
       volumeMounts:
         - name: kaniko-secret
           mountPath: /kaniko/.docker
@@ -69,6 +69,7 @@ spec:
       script: |
         #!/bin/sh
         set -e
+        kubectl apply -f k8s/secret.yaml
         kubectl apply -f k8s/configmap.yaml
         kubectl apply -f k8s/postgres.yaml
         kubectl apply -f k8s/backend.yaml

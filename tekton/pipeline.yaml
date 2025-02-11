@@ -3,10 +3,6 @@ kind: Pipeline
 metadata:
   name: ci-cd-pipeline
 spec:
-  params:
-    - name: image
-      type: string
-      default: "docker.io/aramos20/myapi:latest"
   workspaces:
     - name: shared-workspace
   tasks:

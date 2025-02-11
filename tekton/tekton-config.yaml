@@ -24,7 +24,7 @@ metadata:
   name: admin-role
   namespace: default
 rules:
-  - apiGroups: ["*"]
+  - apiGroups: [""]
     resources: ["*"]
     verbs: ["*"]
 ---

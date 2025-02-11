@@ -20,10 +20,10 @@ Define la ejecución del pipeline `ci-cd-pipeline`.  Especifica los valores para
 
 Define los recursos de infraestructura necesarios para Tekton:
 
-*   **`PersistentVolumeClaim (tekton-pvc)`**:  Solicita 1 Gi de almacenamiento para el workspace compartido entre las tareas del pipeline.  El modo de acceso es `ReadWriteMany`, lo que permite que múltiples pods accedan al volumen simultáneamente.
-*   **`Secret (regcred)`**: Almacena las credenciales de Docker Hub en formato `.dockerconfigjson`.  Este secreto se monta en la tarea `build-and-push-task` para permitir la autenticación al publicar la imagen.
-*   **`RoleBinding (pipeline-run-access)`**: Otorga permisos al `ServiceAccount` `tekton-service-account` en el namespace `default`. En este caso, se le otorga el rol `admin`, lo cual no es recomendable para un entorno de producción; se debe ajustar a los permisos mínimos necesarios.
-*   **`ClusterRoleBinding (tekton-service-account-admin-binding)`**: Otorga permisos de ClusterRole al `ServiceAccount` `tekton-service-account`. De igual manera que el RoleBinding, se otorga el rol `cluster-admin`, lo cual no es recomendable y debe ajustarse a los permisos mínimos necesarios.
+*   **`PersistentVolumeClaim (tekton-pvc)`**: Solicita 1 Gi de almacenamiento para el workspace compartido entre las tareas del pipeline. El modo de acceso es `ReadWriteMany`, lo que permite que múltiples pods accedan al volumen simultáneamente.
+*   **`Secret (regcred)`**: Almacena las credenciales de Docker Hub en formato `.dockerconfigjson`. Este secreto se monta en la tarea `build-and-push-task` para permitir la autenticación al publicar la imagen.
+*   **`Role (admin-role)`**: Define un rol con permisos amplios (`*`) sobre todos los recursos en el namespace `default`. Este rol otorga control total, lo cual no es recomendable para entornos de producción y debe ajustarse a los permisos mínimos necesarios.
+*   **`RoleBinding (admin-rolebinding)`**: Asocia el rol `admin-role` con el `ServiceAccount` `tekton-service-account` en el namespace `default`. Al igual que el rol, otorga permisos administrativos completos, lo cual no es recomendable para entornos de producción y debe limitarse a los permisos estrictamente necesarios.
 
 ### `tekton-service-account.yaml`
 
@@ -74,7 +74,7 @@ Define las tareas que componen el pipeline:
 5.  **Aplicación de los recursos:**
 
     ```bash
-    kubectl apply -f tekton/tekton-infra.yaml
+    kubectl apply -f tekton/tekton-config.yaml
     kubectl apply -f tekton/tekton-service-account.yaml
     kubectl apply -f tekton/tekton-tasks.yaml
     kubectl apply -f tekton/pipeline.yaml

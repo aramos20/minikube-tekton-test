@@ -6,3 +6,19 @@ data:
   DB_HOST: "postgres"
   DB_NAME: "mydb"
   DB_USER: "myuser"
+  index.html: |
+    <html>
+      <head>
+        <title>My Frontend</title>
+      </head>
+      <body>
+        <h1>Welcome to my frontend</h1>
+        <script>
+          fetch('http://127.0.0.1:30007/visits')
+            .then(response => response.json())
+            .then(data => {
+              document.body.innerHTML += `<p>${data.message} - Visitas: ${data.visits} - Modo: ${data.mode}</p>`;
+            });
+        </script>
+      </body>
+    </html>
