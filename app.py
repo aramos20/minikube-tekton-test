@@ -4,14 +4,12 @@ from flask_cors import CORS
 from flask import Flask, jsonify
 
 app = Flask(__name__)
-CORS(app)
-
 def get_db_conn():
     conn = psycopg2.connect(
-        host=os.environ['DB_HOST'],  # Acceso directo con corchetes
-        database=os.environ['DB_NAME'],
-        user=os.environ['DB_USER'],
-        password=os.environ['DB_PASS']
+        host=os.getenv('DB_HOST', 'localhost'),
+        database=os.getenv('DB_NAME', 'database'),
+        user=os.getenv('DB_USER', 'user'),
+        password=os.getenv('DB_PASS', 'password')
     )
     return conn
 
