@@ -6,7 +6,6 @@ spec:
   params:
     - name: url
       type: string
-      description: "URL del repositorio Git"
       default: "https://github.com/aramos20/test.git"
   workspaces:
     - name: output
