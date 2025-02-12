@@ -33,17 +33,17 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  name: db-config
+                  name: configs
                   key: DB_USER
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  name: db-config
+                  name: configs
                   key: DB_NAME
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: db-config
+                  name: configs
                   key: DB_HOST
   volumeClaimTemplates:
     - metadata:

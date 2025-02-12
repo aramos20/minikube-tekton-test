@@ -34,17 +34,17 @@ spec:
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: db-config
+                  name: configs
                   key: DB_HOST
             - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: db-config
+                  name: configs
                   key: DB_NAME
             - name: DB_USER
               valueFrom:
                 configMapKeyRef:
-                  name: db-config
+                  name: configs
                   key: DB_USER
 ---
 apiVersion: v1

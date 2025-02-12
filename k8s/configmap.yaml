@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: db-config
+  name: configs
 data:
   DB_HOST: "postgres"
   DB_NAME: "mydb"

@@ -30,7 +30,7 @@ spec:
       volumes:
         - name: static-files
           configMap:
-            name: frontend-files
+            name: configs
 ---
 apiVersion: v1
 kind: Service
