@@ -12,7 +12,6 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-
     - name: build-and-push
       runAfter: [clone-repo]
       taskRef:
@@ -20,7 +19,6 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-
     - name: deploy
       runAfter: [build-and-push]
       taskRef:
