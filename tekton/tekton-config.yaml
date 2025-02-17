@@ -11,7 +11,7 @@ spec:
 ---
 apiVersion: v1
 data:
-  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsidXNlcm5hbWUiOiJhcmFtb3MyMCIsInBhc3N3b3JkIjoiZGNrcl9wYXRfQlBRWjh1RERoSVpjMzdkRWZYdjk0aklwc0hJIiwiZW1haWwiOiJhZHJpYW5qb3NlcjIwQGdtYWlsLmNvbSIsImF1dGgiOiJZWEpoYlc5ek1qQTZaR05yY2w5d1lYUmZRbEJSV2poMVJFUm9TVnBqTXpka1JXWllkamswYWtsd2MwaEoifX19
+  .dockerconfigjson: ${{ secrets.DOCKER_CRED }}
 kind: Secret
 metadata:
   name: regcred
