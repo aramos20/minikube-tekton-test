@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: deploy-task
+spec:
+  workspaces:
+    - name: source
+      mountPath: /workspace
+  steps:
+    - name: deploy
+      image: bitnami/kubectl:latest
+      workingDir: /workspace
+      script: |
+        #!/bin/sh
+        set -e
+        kubectl apply -f k8s/services/secret.yaml
+        kubectl apply -f k8s/services/configmap.yaml
+        kubectl apply -f k8s/services/postgres-service.yaml
+        kubectl apply -f k8s/services/backend-service.yaml
+        kubectl apply -f k8s/services/frontend-service.yaml
+        kubectl apply -f k8s/deployments/postgres-stateful.yaml
+        kubectl apply -f k8s/deployments/backend-deployment.yaml
+        kubectl apply -f k8s/deployments/frontend-deployment.yaml

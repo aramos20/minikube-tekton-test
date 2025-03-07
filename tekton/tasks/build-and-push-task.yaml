@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-push-task
+spec:
+  params:
+    - name: registry
+      type: string
+      default: "docker.io/aramos20/myapi:latest"
+  workspaces:
+    - name: source
+      mountPath: /workspace
+  steps:
+    - name: kaniko-build-and-push
+      image: gcr.io/kaniko-project/executor:debug
+      workingDir: /workspace
+      command:
+        - /kaniko/executor
+      args:
+        - --dockerfile=Dockerfile
+        - --context=/workspace
+        - --destination=$(params.registry)
+      volumeMounts:
+        - name: kaniko-secret
+          mountPath: /kaniko/.docker
+  volumes:
+    - name: kaniko-secret
+      secret:
+        secretName: regcred
+        items:
+          - key: .dockerconfigjson
+            path: config.json
