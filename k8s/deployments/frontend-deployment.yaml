@@ -31,18 +31,3 @@ spec:
         - name: static-files
           configMap:
             name: configs
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-service
-spec:
-  selector:
-    app: frontend
-  ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-      name: http
-      nodePort: 30010
-  type: NodePort

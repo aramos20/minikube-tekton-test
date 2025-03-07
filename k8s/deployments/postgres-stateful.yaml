@@ -1,30 +1,29 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
-    app: backend
-  name: backend
+    app: postgres
+  name: postgres
 spec:
+  serviceName: postgres
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: postgres
   template:
     metadata:
       labels:
-        app: backend
+        app: postgres
         environment: release
     spec:
       containers:
-        - image: docker.io/aramos20/myapi:latest
-          name: backend
-          imagePullPolicy: IfNotPresent
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+        - image: postgres:alpine
+          name: postgres
           ports:
-            - containerPort: 5000
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
@@ -46,18 +45,12 @@ spec:
                 configMapKeyRef:
                   name: configs
                   key: DB_HOST
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-spec:
-  selector:
-    app: backend
-  ports:
-    - name: backend
-      port: 5000
-      targetPort: 5000
-      protocol: TCP
-      nodePort: 30007
-  type: NodePort
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
