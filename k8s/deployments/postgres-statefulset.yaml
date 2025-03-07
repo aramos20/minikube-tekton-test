@@ -16,6 +16,7 @@ spec:
         app: postgres
         environment: release
     spec:
+      terminationGracePeriodSeconds: 60
       containers:
         - image: postgres:alpine
           name: postgres
@@ -45,6 +46,20 @@ spec:
                 configMapKeyRef:
                   name: configs
                   key: DB_HOST
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage
@@ -54,3 +69,4 @@ spec:
         resources:
           requests:
             storage: 5Gi
+        storageClassName: standard

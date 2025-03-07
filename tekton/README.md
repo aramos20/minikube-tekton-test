@@ -55,10 +55,11 @@ kubectl create secret docker-registry regcred \
 ### 3. Aplicar los recursos
 
 ```bash
-kubectl apply -f tekton/tekton-config.yaml
-kubectl apply -f tekton/tekton-service-account.yaml
-kubectl apply -f tekton/tekton-tasks.yaml
-kubectl apply -f tekton/pipeline.yaml
+kubectl apply -f tekton/storage/
+kubectl apply -f tekton/security/
+kubectl apply -f tekton/tasks/
+kubectl apply -f tekton/pipelines/pipeline.yaml
+kubectl apply -f tekton/pipelines/pipelineRun.yaml
 ```
 ### 4. Ejecutar el Pipeline
 ```bash

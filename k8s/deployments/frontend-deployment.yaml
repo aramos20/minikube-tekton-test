@@ -5,7 +5,12 @@ metadata:
     app: frontend
   name: frontend
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: frontend
@@ -15,6 +20,7 @@ spec:
         app: frontend
         environment: release
     spec:
+      restartPolicy: Always
       containers:
         - image: nginx:alpine
           name: frontend

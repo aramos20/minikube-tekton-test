@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone-task
+spec:
+  params:
+    - name: url
+      type: string
+      default: "https://github.com/aramos20/test.git"
+  workspaces:
+    - name: output
+      mountPath: /workspace
+  steps:
+    - name: clone
+      image: alpine/git:latest
+      workingDir: /workspace
+      script: |
+        #!/bin/sh
+        set -e
+        rm -rf /workspace/* /workspace/.[!.]* /workspace/..?*
+        git clone $(params.url) . 
+        git checkout main

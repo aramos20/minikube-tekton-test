@@ -5,7 +5,12 @@ metadata:
     app: backend
   name: backend
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: backend
@@ -15,6 +20,7 @@ spec:
         app: backend
         environment: release
     spec:
+      restartPolicy: Always
       containers:
         - image: docker.io/aramos20/myapi:latest
           name: backend
