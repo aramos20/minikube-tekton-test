@@ -18,6 +18,6 @@ spec:
         kubectl apply -f k8s/services/postgres-service.yaml
         kubectl apply -f k8s/services/backend-service.yaml
         kubectl apply -f k8s/services/frontend-service.yaml
-        kubectl apply -f k8s/deployments/postgres-stateful.yaml
+        kubectl apply -f k8s/deployments/postgres-statefulset.yaml
         kubectl apply -f k8s/deployments/backend-deployment.yaml
         kubectl apply -f k8s/deployments/frontend-deployment.yaml
