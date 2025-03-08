@@ -63,13 +63,7 @@ minikube addons enable ingress
 helm repo add traefik https://traefik.github.io/charts
 helm repo update
 helm install traefik traefik/traefik --namespace kube-system
-```
-
-### **Aplicar los Recursos en Kubernetes**
-```bash
-kubectl apply -f k8s/services/
-kubectl apply -f k8s/deployments/
-kubectl apply -f k8s/networking/
+kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 ```
 
 ### **Configurar Tekton**
