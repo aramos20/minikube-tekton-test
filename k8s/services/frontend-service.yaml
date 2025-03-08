@@ -9,6 +9,5 @@ spec:
     - port: 80
       targetPort: 80
       protocol: TCP
-      name: http
-      nodePort: 30010
+      name: frontend
   type: ClusterIP

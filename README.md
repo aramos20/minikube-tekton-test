@@ -1,72 +1,116 @@
-# Proyecto de Aplicación con CI/CD en Kubernetes
+# Minikube + Tekton CI/CD + Traefik
 
-Este proyecto incluye una aplicación **Flask** que se despliega en un clúster **Kubernetes**, con un pipeline de **CI/CD** utilizando **Tekton** para automatizar la construcción y despliegue de la aplicación.
+Este proyecto implementa un flujo de CI/CD en Kubernetes utilizando **Minikube, Tekton y Traefik** para gestionar el despliegue de una aplicación 3-Tier con **backend, frontend y base de datos PostgreSQL**.
 
-## Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
-```bash
-./ 
-├── app/ # Código de la aplicación 
-│ ├── app.py # Archivo principal de la aplicación Flask 
-│ ├── requirements.txt # Dependencias de la aplicación 
-│ ├── Dockerfile # Dockerfile para construir la imagen de la app 
-│ └── .dockerignore # Archivos a excluir durante la construcción 
-├── k8s/ # Manifiestos de Kubernetes 
-│ ├── backend.yaml # Despliegue del backend de la aplicación 
-│ ├── frontend.yaml # Despliegue del frontend de la aplicación 
-│ ├── postgres.yaml # Despliegue del servicio de PostgreSQL 
-│ ├── configmap.yaml # Configuración de la base de datos y otros servicios 
-│ └── service.yaml # Almacena credenciales seguras
-└── tekton/ # Configuración de CI/CD con Tekton 
-  ├── pipeline/ # Definición del pipeline
-  ├── pipelineRun.yaml # Definición del PipelineRun 
-  ├── tekton-configs.yaml # Configuración de la infraestructura y otros servicios de Tekton
-  ├── tekton-service-account.yaml/ # Configuración de la cuenta de servicio
-  └── tekton-tasks.yaml/ # Tareas de Tekton
 ```
-La estructura del proyecto está organizada en tres directorios principales:
+./
+├── README.md
+├── Dockerfile
+├── app.py
+├── requirements.txt
+├── .dockerignore
+├── k8s/
+│   ├── README.md
+│   ├── deployments/
+│   │   ├── backend-deployment.yaml
+│   │   ├── frontend-deployment.yaml
+│   │   └── postgres-statefulset.yaml
+│   ├── networking/
+│   │   ├── ingress.yaml
+│   └── services/
+│       ├── backend-service.yaml
+│       ├── configmap.yaml
+│       ├── frontend-service.yaml
+│       ├── postgres-service.yaml
+│       └── secret.yaml
+└── tekton/
+    ├── README.md
+    ├── pipelines/
+    │   ├── pipeline.yaml
+    │   ├── pipelineRun.yaml
+    ├── security/
+    │   ├── docker-registry-secret.yaml
+    │   ├── role-binding.yaml
+    │   ├── role.yaml
+    │   ├── service-account.yaml
+    ├── storage/
+    │   ├── persistent-volume-claim.yaml
+    ├── tasks/
+    │   ├── build-and-push-task.yaml
+    │   ├── deploy-task.yaml
+    │   ├── git-clone-task.yaml
+```
 
-1. **`app/`**: Contiene el código de la aplicación y los archivos relacionados con la construcción de la imagen Docker.
-2. **`k8s/`**: Contiene los manifiestos de Kubernetes para desplegar los servicios y recursos necesarios (incluyendo la base de datos y la aplicación).
-3. **`tekton/`**: Contiene los archivos de configuración de **Tekton**, incluyendo el pipeline y las tareas necesarias para realizar el CI/CD.
+---
 
-## Directorios Principales
+## Descripción
 
-### 1. `app/`
-Contiene el código fuente de la aplicación Flask y los archivos necesarios para construir la imagen Docker.
-- **`app.py`**: Aplicación Flask principal.
-- **`requirements.txt`**: Dependencias de Python.
-- **`Dockerfile`**: Define la construcción de la imagen Docker.
-- **`.dockerignore`**: Excluye archivos innecesarios en la imagen.
+- **Kubernetes (Minikube):** Clúster local para desplegar los servicios.
+- **Tekton:** CI/CD automatizado para construir, publicar y desplegar la aplicación.
+- **Traefik:** Ingress Controller para gestionar el tráfico y exponer servicios sin `kubectl port-forward`.
+- **PostgreSQL:** Base de datos persistente gestionada con `StatefulSet`.
 
-### 2. `k8s/`
-Manifiestos de Kubernetes para desplegar la aplicación y sus servicios.
-- **`backend.yaml`**: Despliegue del backend.
-- **`frontend.yaml`**: Despliegue del frontend.
-- **`postgres.yaml`**: Despliegue de PostgreSQL con StatefulSet.
-- **`configmap.yaml`**: Configuración de variables de entorno (DB_HOST, DB_NAME, etc.).
-- **`secret.yaml`**: Almacena credenciales seguras para PostgreSQL.
+---
 
-### 3. `tekton/`
-Configuración de Tekton para automatizar el flujo CI/CD.
+## Instalación y Configuración
 
-#### `pipeline.yaml`
-Define el pipeline principal:
-1. **`clone-repo`**: Clona el repositorio Git.
-2. **`build-and-push`**: Construye y publica la imagen Docker con Kaniko.
-3. **`deploy`**: Despliega la aplicación en Kubernetes.
+### **Instalar previamente Minikube y Helm**
+```bash
+minikube start
+minikube addons enable ingress
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+helm install traefik traefik/traefik --namespace kube-system
+```
 
-#### `pipelineRun.yaml`
-Ejecuta el pipeline con parámetros específicos, como el workspace compartido (`tekton-pvc`) y la cuenta de servicio `tekton-service-account`.
+### **Aplicar los Recursos en Kubernetes**
+```bash
+kubectl apply -f k8s/services/
+kubectl apply -f k8s/deployments/
+kubectl apply -f k8s/networking/
+```
 
-#### `tekton-infra.yaml`
-Configura recursos necesarios:
-- **PersistentVolumeClaim (`tekton-pvc`)**: Almacena datos compartidos entre tareas.
-- **Secret (`regcred`)**: Credenciales de Docker Hub.
-- **Role y RoleBinding**: Permisos para el `ServiceAccount`.
+### **Configurar Tekton**
+```bash
+kubectl apply -f tekton/storage/
+kubectl apply -f tekton/security/
+kubectl apply -f tekton/tasks/
+kubectl apply -f tekton/pipelines/pipeline.yaml
+kubectl apply -f tekton/pipelines/pipelineRun.yaml
+```
 
-#### `tekton-tasks.yaml`
-Define las tareas individuales:
-1. **`git-clone-task`**: Clona el repositorio.
-2. **`build-and-push-task`**: Construye y publica la imagen Docker.
-3. **`deploy-task`**: Despliega la aplicación usando `kubectl apply`.
+### **Ejecutar el Pipeline**
+```bash
+kubectl apply -f tekton/pipelines/pipelineRun.yaml
+```
+
+### **Acceder a la Aplicación con Traefik**
+Si configuraste el `Ingress.yaml` con `nip.io`, accede desde el navegador a:
+```
+http://backend.127.0.0.1.nip.io
+http://frontend.127.0.0.1.nip.io
+```
+Si prefieres usar nombres personalizados, agrega la IP de Minikube a `/etc/hosts`:
+```bash
+minikube ip
+```
+Ejemplo si la IP es `192.168.49.2`:
+```
+192.168.49.2 backend.local
+192.168.49.2 frontend.local
+```
+Luego accede a:
+```
+http://backend.local
+http://frontend.local
+```
+
+---
+
+## Resumen del Flujo CI/CD con Tekton
+1️⃣ **Clona el código fuente desde GitHub**.  
+2️⃣ **Construye y publica la imagen Docker usando Kaniko** en Docker Hub.  
+3️⃣ **Despliega la aplicación en Kubernetes** aplicando los manifiestos YAML.  
+4️⃣ **Traefik gestiona el tráfico**, permitiendo acceso sin el uso de `kubectl port-forward`.  
