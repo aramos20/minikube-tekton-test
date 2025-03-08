@@ -13,11 +13,8 @@ spec:
       script: |
         #!/bin/sh
         set -e
-        kubectl apply -f k8s/services/secret.yaml
-        kubectl apply -f k8s/services/configmap.yaml
-        kubectl apply -f k8s/services/postgres-service.yaml
-        kubectl apply -f k8s/services/backend-service.yaml
-        kubectl apply -f k8s/services/frontend-service.yaml
+        kubectl apply -f k8s/services/
+        kubectl apply -f k8s/networking/
         kubectl apply -f k8s/deployments/postgres-statefulset.yaml
         kubectl apply -f k8s/deployments/backend-deployment.yaml
         kubectl apply -f k8s/deployments/frontend-deployment.yaml
