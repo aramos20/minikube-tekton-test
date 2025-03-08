@@ -78,7 +78,6 @@ kubectl apply -f tekton/storage/
 kubectl apply -f tekton/security/
 kubectl apply -f tekton/tasks/
 kubectl apply -f tekton/pipelines/pipeline.yaml
-kubectl apply -f tekton/pipelines/pipelineRun.yaml
 ```
 
 ### Ejecutar el Pipeline
