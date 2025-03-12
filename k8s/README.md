@@ -70,8 +70,8 @@ k8s/
 
 helm repo add traefik https://traefik.github.io/charts
 helm repo update && helm install traefik traefik/traefik
-  --set ingressRoute.dashboard.enabled=true \ # Para poder acceder al Dashboard
-  --set service.type=LoadBalancer \
+  # Para poder acceder al Dashboard
+  --set ingressRoute.dashboard.enabled=true \
   -n default
 
 ---
