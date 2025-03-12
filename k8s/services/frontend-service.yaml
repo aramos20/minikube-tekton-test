@@ -6,8 +6,7 @@ spec:
   selector:
     app: frontend
   ports:
-    - port: 80
+    - name: frontend
+      port: 80
       targetPort: 80
-      protocol: TCP
-      name: frontend
   type: ClusterIP

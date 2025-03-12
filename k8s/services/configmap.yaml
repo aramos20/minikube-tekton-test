@@ -14,7 +14,7 @@ data:
       <body>
         <h1>Welcome to my frontend</h1>
         <script>
-          fetch('http://127.0.0.1:30007/visits')
+          fetch('http://127.0.0.1/visits')
             .then(response => response.json())
             .then(data => {
               document.body.innerHTML += `<p>${data.message} - Visitas: ${data.visits} - Modo: ${data.mode}</p>`;
