@@ -4,29 +4,29 @@ Este directorio contiene los recursos de **Tekton Pipelines** para la automatiza
 
 ---
 
-## 📁 Estructura del Directorio
+## Estructura del Directorio
 
 ```
 tekton/
 ├── pipelines/   # Definiciones de pipelines
 │   ├── pipeline.yaml
-│   ├── pipelineRun.yaml
+│   └── pipelineRun.yaml
 ├── security/    # Seguridad y permisos
 │   ├── docker-registry-secret.yaml
 │   ├── role-binding.yaml
 │   ├── role.yaml
-│   ├── service-account.yaml
+│   └── service-account.yaml
 ├── storage/     # Almacenamiento Persistente
-│   ├── persistent-volume-claim.yaml
-├── tasks/       # Definición de Tareas en el Pipeline
-│   ├── build-and-push-task.yaml
-│   ├── deploy-task.yaml
-│   ├── git-clone-task.yaml
+│   └── persistent-volume-claim.yaml
+└── tasks/       # Definición de Tareas en el Pipeline
+    ├── build-and-push-task.yaml
+    ├── deploy-task.yaml
+    └── git-clone-task.yaml
 ```
 
 ---
 
-## 🚀 Componentes Principales
+## Componentes Principales
 
 ### **Pipeline Principal** (`pipelines/pipeline.yaml`)
 - **`clone-repo`**: Clona el código fuente desde GitHub usando `git-clone-task`.
@@ -51,7 +51,7 @@ tekton/
 
 ---
 
-## 🔧 Uso
+## Uso
 
 ### **1️⃣ Instalar Tekton Pipelines**
 ```bash

@@ -13,13 +13,13 @@ k8s/
 │   ├── frontend-deployment.yaml
 │   ├── postgres-statefulset.yaml
 ├── networking/    # Ingress y Configuración de Red
-│   ├── ingress.yaml
-├── services/      # Servicios y Configuraciones
-│   ├── backend-service.yaml
-│   ├── configmap.yaml
-│   ├── frontend-service.yaml
-│   ├── postgres-service.yaml
-│   ├── secret.yaml
+│   └── ingress.yaml
+└── services/      # Servicios y Configuraciones
+    ├── backend-service.yaml
+    ├── configmap.yaml
+    ├── frontend-service.yaml
+    ├── postgres-service.yaml
+    └── secret.yaml
 ```
 
 ---
@@ -56,7 +56,7 @@ k8s/
 
 ---
 
-## 🔧 Despliegue de la Aplicación
+## Despliegue de la Aplicación
 
 ### **1️⃣ Aplicar los Recursos de Kubernetes**
 ```bash
