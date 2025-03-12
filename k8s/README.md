@@ -66,10 +66,22 @@ k8s/
 
 ## Despliegue de la Aplicación
 
+### Instalación del Ingress Controller Traefik en Minikube
+
+helm repo add traefik https://traefik.github.io/charts
+helm repo update && helm install traefik traefik/traefik
+  --set ingressRoute.dashboard.enabled=true \ # Para poder acceder al Dashboard
+  --set service.type=LoadBalancer \
+  -n default
+
+---
+
 ### Aplicar los Recursos en Kubernetes
 Ejecutar los siguientes comandos en orden:
 
 ```bash
+kubectl apply -f k8s/networking/ingress.yaml
+
 kubectl apply -f k8s/services/secret.yaml
 kubectl apply -f k8s/services/configmap.yaml
 kubectl apply -f k8s/services/postgres-service.yaml
@@ -83,18 +95,12 @@ kubectl apply -f k8s/deployments/frontend-deployment.yaml
 
 ---
 
-### Acceder a la Aplicación
-
  **Exponer los Servicios en Minikube**
 ```bash
-minikube service frontend-service
-minikube service backend-service
+minikube tunnel
 ```
+kubectl get ingressclass
 
- **Redirigir Puertos Manualmente**
-> Minikube asigna puertos de manera aleatoria, por lo que es necesario redirigir los puertos manualmente para garantizar el acceso a los servicios en los puertos deseados.
+kubectl get pods -n default
 
-```bash
-kubectl port-forward svc/backend-service 30007:5000 &
-kubectl port-forward svc/frontend-service 30010:80 &
-```
+kubectl get svc -n default ---> usar el external ip

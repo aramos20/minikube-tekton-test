@@ -3,22 +3,20 @@ kind: Ingress
 metadata:
   name: myapp-ingress
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
+    kubernetes.io/ingress.class: "traefik"
 spec:
   ingressClassName: traefik
   rules:
-    - host: backend.127.0.0.1.nip.io
-      http:
+    - http:
         paths:
-          - path: /
+          - path: /visits
             pathType: Prefix
             backend:
               service:
                 name: backend-service
                 port:
                   number: 5000
-    - host: frontend.127.0.0.1.nip.io
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix

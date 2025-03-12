@@ -1,19 +1,35 @@
 import os
+import time
 import psycopg2
+from psycopg2 import OperationalError
 from flask_cors import CORS
 from flask import Flask, jsonify
 
 app = Flask(__name__)
 CORS(app)
 
-def get_db_conn():
-    conn = psycopg2.connect(
-        host=os.environ['POSTGRES_HOST'],
-        database=os.environ['POSTGRES_DB'],
-        user=os.environ['POSTGRES_USER'],
-        password=os.environ['POSTGRES_PASSWORD']
-    )
-    return conn
+def get_db_conn(retries=10, delay=30):
+    """
+    Intenta conectarse a la base de datos con reintentos.
+    
+    retries: Número máximo de intentos antes de fallar.
+    delay: Tiempo de espera entre intentos (segundos).
+    """
+    for attempt in range(retries):
+        try:
+            conn = psycopg2.connect(
+                host=os.environ['POSTGRES_HOST'],
+                database=os.environ['POSTGRES_DB'],
+                user=os.environ['POSTGRES_USER'],
+                password=os.environ['POSTGRES_PASSWORD']
+            )
+            print("Conexión exitosa a PostgreSQL")
+            return conn
+        except OperationalError as e:
+            print(f" Intento {attempt + 1} de {retries}: No se pudo conectar a PostgreSQL. Esperando {delay} segundos...")
+            time.sleep(delay)
+
+    raise Exception(" No se pudo conectar a la base de datos después de varios intentos. Verifica la configuración.")
 
 def init_db():
     try:

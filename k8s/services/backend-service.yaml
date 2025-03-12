@@ -9,5 +9,4 @@ spec:
     - name: backend
       port: 5000
       targetPort: 5000
-      protocol: TCP
   type: ClusterIP

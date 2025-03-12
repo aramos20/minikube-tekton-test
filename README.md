@@ -59,10 +59,13 @@ Este proyecto implementa un flujo de CI/CD en Kubernetes utilizando **Minikube, 
 ### **Instalar previamente Minikube y Helm**
 ```bash
 minikube start
-minikube addons enable ingress
+
 helm repo add traefik https://traefik.github.io/charts
-helm repo update
-helm install traefik traefik/traefik --namespace kube-system
+helm repo update && helm install traefik traefik/traefik \
+  # En caso de que quieras ver el Dashboard, en caso contrario omitelo
+  --set ingressRoute.dashboard.enabled=true \
+  -n default
+
 kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 ```
 
