@@ -1,9 +1,8 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: minikube-tunnel
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: minikube-tunnel
@@ -12,6 +11,8 @@ spec:
       labels:
         app: minikube-tunnel
     spec:
+      hostNetwork: true
+      hostPID: true
       containers:
         - name: tunnel
           image: bitnami/kubectl:latest
@@ -19,6 +20,6 @@ spec:
           args:
             - |
               echo "Iniciando minikube tunnel...";
-              nohup minikube tunnel > /dev/null 2>&1
+              minikube tunnel
           securityContext:
-            privileged: true
+            privileged: true # 🔹 Acceso completo para modificar la red del host
