@@ -1,70 +1,64 @@
 # Tekton CI/CD Pipeline
 
-Aquí se define un pipeline de CI/CD utilizando **Tekton** para automatizar el flujo de trabajo de una aplicación. El pipeline clona un repositorio Git, construye y publica una imagen Docker, y despliega la aplicación en Kubernetes.
+Este directorio contiene los recursos de **Tekton Pipelines** para la automatización del CI/CD en Kubernetes.
 
-## Estructura del Directorio
+---
+
+## 📁 Estructura del Directorio
+
 ```
 tekton/
-├── pipelines/
+├── pipelines/   # Definiciones de pipelines
 │   ├── pipeline.yaml
 │   ├── pipelineRun.yaml
-├── security/
+├── security/    # Seguridad y permisos
 │   ├── docker-registry-secret.yaml
 │   ├── role-binding.yaml
 │   ├── role.yaml
 │   ├── service-account.yaml
-├── storage/
+├── storage/     # Almacenamiento Persistente
 │   ├── persistent-volume-claim.yaml
-├── tasks/
+├── tasks/       # Definición de Tareas en el Pipeline
 │   ├── build-and-push-task.yaml
 │   ├── deploy-task.yaml
 │   ├── git-clone-task.yaml
 ```
 
-## Componentes Principales
+---
 
-### `pipelines/`
- **`pipeline.yaml`**: Define el pipeline principal `ci-cd-pipeline` con las siguientes tareas:
+## 🚀 Componentes Principales
 
-1. **`clone-repo`**: Clona el repositorio Git (por defecto: `https://github.com/aramos20/test.git`, rama `main`) usando `git-clone-task`.
-2. **`build-and-push`**: Construye y publica la imagen Docker (por defecto: `docker.io/aramos20/myapi:latest`) usando **Kaniko**.
-3. **`deploy`**: Despliega la aplicación en Kubernetes aplicando manifiestos YAML.
+### **Pipeline Principal** (`pipelines/pipeline.yaml`)
+- **`clone-repo`**: Clona el código fuente desde GitHub usando `git-clone-task`.
+- **`build-and-push`**: Construye y publica la imagen Docker en Docker Hub con Kaniko.
+- **`deploy`**: Despliega la aplicación en Kubernetes con `kubectl apply`.
 
- **`pipelineRun.yaml`**: Ejecuta el pipeline con parámetros específicos, como el workspace compartido (`tekton-pvc`). Usa la cuenta de servicio `tekton-service-account`.
+### **Ejecución del Pipeline** (`pipelines/pipelineRun.yaml`)
+- Ejecuta el pipeline `ci-cd-pipeline` con un workspace compartido (`tekton-pvc`).
+
+### **Tareas (`tasks/`)
+- **`git-clone-task.yaml`**: Clona el código fuente desde un repositorio.
+- **`build-and-push-task.yaml`**: Construye y publica la imagen Docker.
+- **`deploy-task.yaml`**: Despliega la aplicación en Kubernetes.
+
+### **Seguridad y Permisos (`security/`)
+- **`docker-registry-secret.yaml`**: Credenciales para Docker Hub.
+- **`service-account.yaml`**: Define permisos para la ejecución de Tekton.
+- **`role.yaml` & `role-binding.yaml`**: Asignan permisos al `ServiceAccount`.
+
+### **Almacenamiento (`storage/`)
+- **`persistent-volume-claim.yaml`**: Proporciona almacenamiento compartido entre tareas.
 
 ---
 
-### `tasks/`
-Define las tareas individuales que se ejecutan dentro del pipeline:
+## 🔧 Uso
 
-- **`git-clone-task.yaml`** → Clona el repositorio.
-- **`build-and-push-task.yaml`** → Construye y publica la imagen Docker usando Kaniko.
-- **`deploy-task.yaml`** → Despliega la aplicación en Kubernetes ejecutando `kubectl apply`.
-
----
-
-### `storage/`
- **`persistent-volume-claim.yaml`**: Proporciona un volumen persistente (`tekton-pvc`) para compartir datos entre tareas.
-
----
-
-### `security/`
- **`docker-registry-secret.yaml`**: Almacena credenciales de Docker Hub para autenticación.
-
- **`service-account.yaml`**: Define la `ServiceAccount` utilizada por Tekton.
-
- **`role.yaml` & `role-binding.yaml`**: Otorgan permisos al `ServiceAccount` para ejecutar tareas en Kubernetes.
-
----
-
-## Uso
-
-### Instalar Tekton Pipelines
+### **1️⃣ Instalar Tekton Pipelines**
 ```bash
 kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 ```
 
-### Crear Secret para Docker Hub
+### **2️⃣ Crear Secret para Docker Hub**
 ```bash
 kubectl create secret docker-registry regcred \
   --docker-username=TU_USUARIO_DOCKERHUB \
@@ -72,15 +66,22 @@ kubectl create secret docker-registry regcred \
   --docker-email=TU_EMAIL@EJEMPLO.COM
 ```
 
-### Aplicar los recursos de Tekton
+### **3️⃣ Aplicar los Recursos de Tekton**
 ```bash
 kubectl apply -f tekton/storage/
 kubectl apply -f tekton/security/
 kubectl apply -f tekton/tasks/
-kubectl apply -f tekton/pipelines/pipeline.yaml
 ```
 
-### Ejecutar el Pipeline
+### **4️⃣ Ejecutar el Pipeline**
 ```bash
-kubectl apply -f tekton/pipelines/pipelineRun.yaml
+kubectl apply -f tekton/pipelines/
 ```
+
+### **5️⃣ Verificar el Estado de la Ejecución**
+```bash
+tkn pipeline list
+tkn pipelinerun list
+```
+
+Para más detalles sobre la infraestructura Kubernetes, consulta [`k8s/README.md`](../k8s/README.md).

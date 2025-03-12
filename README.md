@@ -2,7 +2,7 @@
 
 Este proyecto implementa un flujo de CI/CD en Kubernetes utilizando **Minikube, Tekton y Traefik** para gestionar el despliegue de una aplicación 3-Tier con **backend, frontend y base de datos PostgreSQL**.
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 ./
@@ -45,31 +45,34 @@ Este proyecto implementa un flujo de CI/CD en Kubernetes utilizando **Minikube, 
 
 ---
 
-## Descripción
+## Debes tener previamente instalado:
 
 - **Kubernetes (Minikube):** Clúster local para desplegar los servicios.
-- **Tekton:** CI/CD automatizado para construir, publicar y desplegar la aplicación.
-- **Traefik:** Ingress Controller para gestionar el tráfico y exponer servicios sin `kubectl port-forward`.
-- **PostgreSQL:** Base de datos persistente gestionada con `StatefulSet`.
+- **Helm (Minikube):** Clúster local para desplegar los servicios.
 
 ---
 
 ## Instalación y Configuración
 
-### **Instalar previamente Minikube y Helm**
+### **1️⃣ Iniciar Minikube**
 ```bash
 minikube start
+```
 
-helm repo add traefik https://traefik.github.io/charts
-helm repo update && helm install traefik traefik/traefik \
-  # En caso de que quieras ver el Dashboard, en caso contrario omitelo
-  --set ingressRoute.dashboard.enabled=true \
-  -n default
-
+### **2️⃣ Instalar Tekton**
+```bash
 kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 ```
 
-### **Configurar Tekton**
+### **3️⃣ Instalar Traefik con Helm**
+```bash
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+helm install traefik traefik/traefik \
+  -n default
+```
+
+### **4️⃣ Aplicar y Ejecutar el Pipeline en Tekton**
 ```bash
 kubectl apply -f tekton/storage/
 kubectl apply -f tekton/security/
@@ -78,9 +81,9 @@ kubectl apply -f tekton/pipelines/pipeline.yaml
 kubectl apply -f tekton/pipelines/pipelineRun.yaml
 ```
 
-### **Ejecutar el Pipeline**
+### **5️⃣ Exponer Servicios con Minikube Tunnel**
 ```bash
-kubectl apply -f tekton/pipelines/pipelineRun.yaml
+minikube tunnel
 ```
 
 ### **Acceder a la Aplicación con Traefik**
@@ -106,8 +109,9 @@ http://frontend.local
 
 ---
 
-## Resumen del Flujo CI/CD con Tekton
-1️⃣ **Clona el código fuente desde GitHub**.  
-2️⃣ **Construye y publica la imagen Docker usando Kaniko** en Docker Hub.  
-3️⃣ **Despliega la aplicación en Kubernetes** aplicando los manifiestos YAML.  
-4️⃣ **Traefik gestiona el tráfico**, permitiendo acceso sin el uso de `kubectl port-forward`.  
+## 🔄 Flujo CI/CD con Tekton
+1️⃣ **Clona el código fuente desde GitHub.**  
+2️⃣ **Construye y publica la imagen Docker usando Kaniko en Docker Hub.**  
+3️⃣ **Despliega la aplicación en Kubernetes aplicando los manifiestos YAML.**  
+
+Para más detalles, consulta los README específicos dentro de [`k8s/`](k8s/README.md) y [`tekton/`](tekton/README.md).
