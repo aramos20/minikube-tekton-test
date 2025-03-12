@@ -18,7 +18,7 @@ Este proyecto implementa un flujo de CI/CD en Kubernetes utilizando **Minikube, 
 │   │   ├── frontend-deployment.yaml
 │   │   └── postgres-statefulset.yaml
 │   ├── networking/
-│   │   ├── ingress.yaml
+│   │   └── ingress.yaml
 │   └── services/
 │       ├── backend-service.yaml
 │       ├── configmap.yaml
@@ -29,18 +29,18 @@ Este proyecto implementa un flujo de CI/CD en Kubernetes utilizando **Minikube, 
     ├── README.md
     ├── pipelines/
     │   ├── pipeline.yaml
-    │   ├── pipelineRun.yaml
+    │   └── pipelineRun.yaml
     ├── security/
     │   ├── docker-registry-secret.yaml
     │   ├── role-binding.yaml
     │   ├── role.yaml
-    │   ├── service-account.yaml
+    │   └── service-account.yaml
     ├── storage/
-    │   ├── persistent-volume-claim.yaml
-    ├── tasks/
-    │   ├── build-and-push-task.yaml
-    │   ├── deploy-task.yaml
-    │   ├── git-clone-task.yaml
+    │   └── persistent-volume-claim.yaml
+    └── tasks/
+        ├── build-and-push-task.yaml
+        ├── deploy-task.yaml
+        └── git-clone-task.yaml
 ```
 
 ---
