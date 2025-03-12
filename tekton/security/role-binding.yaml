@@ -10,5 +10,5 @@ subjects:
     namespace: default
 roleRef:
   kind: Role
-  name: admin-role
+  name: tekton-pipeline-role
   apiGroup: rbac.authorization.k8s.io
