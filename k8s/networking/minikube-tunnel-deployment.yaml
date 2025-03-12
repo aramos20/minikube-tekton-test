@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minikube-tunnel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minikube-tunnel
+  template:
+    metadata:
+      labels:
+        app: minikube-tunnel
+    spec:
+      containers:
+        - name: tunnel
+          image: bitnami/kubectl:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Iniciando minikube tunnel...";
+              nohup minikube tunnel > /dev/null 2>&1
+          securityContext:
+            privileged: true

@@ -21,13 +21,8 @@ spec:
         - name: source
           workspace: shared-workspace
 
-    - name: start-tunnel
-      runAfter: [build-and-push]
-      taskRef:
-        name: tunnel-task
-
     - name: deploy
-      runAfter: [start-tunnel]
+      runAfter: [build-and-push]
       taskRef:
         name: deploy-task
       workspaces:
