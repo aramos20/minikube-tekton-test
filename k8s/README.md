@@ -1,6 +1,6 @@
 # Despliegue de una Aplicación 3-Tier en Kubernetes
 
-Los siguientes directorios incluyen manifiestos de Kubernetes para desplegar una aplicación web con **frontend**, **backend** y base de datos **PostgreSQL**.
+Este directorio contiene los manifiestos de Kubernetes necesarios para desplegar una aplicación con **frontend, backend y base de datos PostgreSQL**.
 
 ---
 
@@ -8,11 +8,13 @@ Los siguientes directorios incluyen manifiestos de Kubernetes para desplegar una
 
 ```
 k8s/
-├── deployments/
+├── deployments/   # Despliegues (Deployments & StatefulSets)
 │   ├── backend-deployment.yaml
 │   ├── frontend-deployment.yaml
-│   ├── postgres-stateful.yaml
-├── services/
+│   ├── postgres-statefulset.yaml
+├── networking/    # Ingress y Configuración de Red
+│   ├── ingress.yaml
+├── services/      # Servicios y Configuraciones
 │   ├── backend-service.yaml
 │   ├── configmap.yaml
 │   ├── frontend-service.yaml
@@ -24,83 +26,53 @@ k8s/
 
 ## Componentes
 
-### PostgreSQL
- **`k8s/deployments/postgres-stateful.yaml`**
-- **`StatefulSet`**: Proporciona persistencia de datos y nombre estable para PostgreSQL.
+### **PostgreSQL**  
+📌 `k8s/deployments/postgres-statefulset.yaml`
+- **`StatefulSet`**: Asegura persistencia de datos y estabilidad en los nombres del servicio de base de datos.
 
----
+### **Backend**  
+📌 `k8s/deployments/backend-deployment.yaml`
+- **`Deployment`**: Ejecuta la lógica de negocio y se conecta a PostgreSQL mediante variables de entorno.
+- **`Service`**: `k8s/services/backend-service.yaml` expone el backend internamente.
 
-### Backend
- **`k8s/deployments/backend-deployment.yaml`**
-- **`Deployment`**: Backend en Docker conectado a PostgreSQL mediante variables de entorno.
+### **Frontend**  
+📌 `k8s/deployments/frontend-deployment.yaml`
+- **`Deployment`**: Nginx sirviendo archivos estáticos almacenados en un ConfigMap.
+- **`Service`**: `k8s/services/frontend-service.yaml` expone el frontend internamente.
 
----
+### **Configuración y Seguridad**
+📌 `k8s/services/configmap.yaml`  
+- Contiene configuraciones necesarias para la aplicación, incluyendo:
+  - `DB_HOST`: Nombre del servicio de PostgreSQL.
+  - `DB_NAME`: Nombre de la base de datos.
+  - `DB_USER`: Usuario de conexión.
+  - `index.html`: Página servida por Nginx.
 
-### Frontend
- **`k8s/deployments/frontend-deployment.yaml`**
-- **`Deployment`**: Nginx sirviendo archivos estáticos desde un ConfigMap.
-
----
-
-### Configuración y Seguridad
- **`k8s/services/configmap.yaml`**
-- Contiene configuraciones necesarias para la aplicación.
-- `DB_HOST`: Nombre del servicio de PostgreSQL.
-- `DB_NAME`: Nombre de la base de datos.
-- `DB_USER`: Usuario para conectarse a la base de datos.
-- `index.html`: Archivo estático servido por Nginx.
-
- **`k8s/services/secret.yaml`**
+📌 `k8s/services/secret.yaml`  
 - **`DB_PASS`**: Almacena credenciales seguras para PostgreSQL.
 
- **`k8s/services/backend-service.yaml`**
-- **`Servicio`**: Expone el backend internamente como `backend-service`.
-
- **`k8s/services/frontend-service.yaml`**
-- **`Servicio`**: Expone el frontend internamente como `frontend-service`.
-
- **`k8s/services/postgres-service.yaml`**
-- **`Servicio`**: Expone la DB internamente como `postgres-service`.
+📌 `k8s/networking/ingress.yaml`  
+- **`Ingress`**: Define reglas de acceso para exponer frontend y backend a través de Traefik.
 
 ---
 
-## Despliegue de la Aplicación
+## 🔧 Despliegue de la Aplicación
 
-### Instalación del Ingress Controller Traefik en Minikube
-
-helm repo add traefik https://traefik.github.io/charts
-helm repo update && helm install traefik traefik/traefik
-  # Para poder acceder al Dashboard
-  --set ingressRoute.dashboard.enabled=true \
-  -n default
-
----
-
-### Aplicar los Recursos en Kubernetes
-Ejecutar los siguientes comandos en orden:
-
+### **1️⃣ Aplicar los Recursos de Kubernetes**
 ```bash
-kubectl apply -f k8s/networking/ingress.yaml
-
-kubectl apply -f k8s/services/secret.yaml
-kubectl apply -f k8s/services/configmap.yaml
-kubectl apply -f k8s/services/postgres-service.yaml
-kubectl apply -f k8s/services/backend-service.yaml
-kubectl apply -f k8s/services/frontend-service.yaml
-
-kubectl apply -f k8s/deployments/postgres-statefulset.yaml
-kubectl apply -f k8s/deployments/backend-deployment.yaml
-kubectl apply -f k8s/deployments/frontend-deployment.yaml
+kubectl apply -f k8s/
 ```
 
----
-
- **Exponer los Servicios en Minikube**
+### **2️⃣ Exponer Servicios con Minikube Tunnel**
 ```bash
 minikube tunnel
 ```
+
+### **3️⃣ Verificar que todo está corriendo**
+```bash
 kubectl get ingressclass
-
 kubectl get pods -n default
+kubectl get svc -n default
+```
 
-kubectl get svc -n default ---> usar el external ip
+Para más detalles sobre el pipeline de CI/CD, consulta [`tekton/README.md`](../tekton/README.md).
