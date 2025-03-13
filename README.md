@@ -86,27 +86,6 @@ kubectl apply -f tekton/pipelines/pipelineRun.yaml
 minikube tunnel
 ```
 
-### **Acceder a la Aplicación con Traefik**
-Si configuraste el `Ingress.yaml` con `nip.io`, accede desde el navegador a:
-```
-http://backend.127.0.0.1.nip.io
-http://frontend.127.0.0.1.nip.io
-```
-Si prefieres usar nombres personalizados, agrega la IP de Minikube a `/etc/hosts`:
-```bash
-minikube ip
-```
-Ejemplo si la IP es `192.168.49.2`:
-```
-192.168.49.2 backend.local
-192.168.49.2 frontend.local
-```
-Luego accede a:
-```
-http://backend.local
-http://frontend.local
-```
-
 ---
 
 ## 🔄 Flujo CI/CD con Tekton
