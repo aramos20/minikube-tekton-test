@@ -9,15 +9,6 @@ spec:
   rules:
     - http:
         paths:
-          - path: /visits
-            pathType: Prefix
-            backend:
-              service:
-                name: backend-service
-                port:
-                  number: 5000
-    - http:
-        paths:
           - path: /
             pathType: Prefix
             backend:
@@ -25,3 +16,10 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
+          - path: /visits
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 5000

@@ -11,7 +11,7 @@ k8s/
 ├── deployments/   # Despliegues (Deployments & StatefulSets)
 │   ├── backend-deployment.yaml
 │   ├── frontend-deployment.yaml
-│   ├── postgres-statefulset.yaml
+│   └──postgres-statefulset.yaml
 ├── networking/    # Ingress y Configuración de Red
 │   └── ingress.yaml
 └── services/      # Servicios y Configuraciones
