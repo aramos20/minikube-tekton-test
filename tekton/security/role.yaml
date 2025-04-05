@@ -2,24 +2,16 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: default
-  name: tekton-pipeline-role
+  name: tekton-deploy-role
 rules:
   - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "watch", "create", "delete"]
+    resources: ["services", "configmaps", "secrets"]
+    verbs: ["get", "create", "update", "apply"]
 
-  - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets"]
+    verbs: ["get", "create", "update", "apply"]
 
-  - apiGroups: ["apps", "networking.k8s.io"]
-    resources: ["deployments", "services", "ingresses"]
-    verbs: ["get", "list", "watch", "create", "update", "delete"]
-
-  - apiGroups: [""]
-    resources: ["configmaps", "secrets"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: [""]
-    resources: ["persistentvolumeclaims"]
-    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "create", "update", "apply"]
